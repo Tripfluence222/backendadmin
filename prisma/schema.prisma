@@ -1,0 +1,460 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  domain    String?
+  settings  Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users           User[]
+  listings        Listing[]
+  orders          Order[]
+  customers       Customer[]
+  reviews         Review[]
+  socialAccounts  SocialAccount[]
+  socialPosts     SocialPost[]
+  eventSyncs      EventSync[]
+  webhookEndpoints WebhookEndpoint[]
+  auditLogs       AuditLog[]
+  apiKeys         ApiKey[]
+  coupons         Coupon[]
+  loyaltyLedgers  LoyaltyLedger[]
+  roleAssignments RoleAssignment[]
+
+  @@map("businesses")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  businessId  String
+  email       String   @unique
+  firstName   String
+  lastName    String
+  avatar      String?
+  isActive    Boolean  @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  business        Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  roleAssignments RoleAssignment[]
+  auditLogs       AuditLog[]
+
+  @@map("users")
+}
+
+model RoleAssignment {
+  id         String   @id @default(cuid())
+  userId     String
+  businessId String
+  role       Role     @default(STAFF)
+  createdAt  DateTime @default(now())
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, businessId])
+  @@map("role_assignments")
+}
+
+model Listing {
+  id            String        @id @default(cuid())
+  businessId    String
+  title         String
+  type          ListingType
+  status        ListingStatus @default(DRAFT)
+  slug          String
+  description   String
+  seoMeta       Json          @default("{}")
+  media         Json          @default("[]")
+  location      String?
+  capacity      Int?
+  price         Decimal?
+  currency      String        @default("USD")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  business       Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  inventorySlots InventorySlot[]
+  ratePlans      RatePlan[]
+  orders         OrderItem[]
+  reviews        Review[]
+  eventSyncs     EventSync[]
+
+  @@unique([businessId, slug])
+  @@map("listings")
+}
+
+model InventorySlot {
+  id        String   @id @default(cuid())
+  listingId String
+  start     DateTime
+  end       DateTime
+  capacity  Int
+  remaining Int
+  location  String?
+  notes     String?
+  blackout  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("inventory_slots")
+}
+
+model RatePlan {
+  id          String   @id @default(cuid())
+  listingId   String
+  name        String
+  price       Decimal
+  currency    String   @default("USD")
+  refundable  Boolean  @default(true)
+  depositPct  Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("rate_plans")
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  businessId  String
+  customerId  String?
+  total       Decimal
+  currency    String      @default("USD")
+  status      OrderStatus @default(PENDING)
+  items       Json        @default("[]")
+  paymentRef  String?
+  metadata    Json        @default("{}")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  business  Business     @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customer  Customer?    @relation(fields: [customerId], references: [id])
+  payments  Payment[]
+  loyaltyLedgers LoyaltyLedger[]
+  orderItems OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  listingId String
+  quantity  Int
+  price     Decimal
+  metadata  Json    @default("{}")
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id])
+
+  @@map("order_items")
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  orderId   String
+  provider  PaymentProvider
+  amount    Decimal
+  currency  String        @default("USD")
+  status    PaymentStatus @default(AUTHORIZED)
+  raw       Json          @default("{}")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Relations
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Customer {
+  id             String   @id @default(cuid())
+  businessId     String
+  email          String
+  name           String
+  phone          String?
+  loyaltyPoints  Int      @default(0)
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  business       Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  orders         Order[]
+  reviews        Review[]
+  loyaltyLedgers LoyaltyLedger[]
+
+  @@unique([businessId, email])
+  @@map("customers")
+}
+
+model Review {
+  id         String      @id @default(cuid())
+  businessId String
+  listingId  String
+  customerId String
+  rating     Int
+  text       String?
+  status     ReviewStatus @default(PENDING)
+  reply      String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  // Relations
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  listing  Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@map("reviews")
+}
+
+model SocialAccount {
+  id         String           @id @default(cuid())
+  businessId String
+  provider   SocialProvider
+  token      String
+  scopes     String[]
+  metadata   Json             @default("{}")
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  // Relations
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@unique([businessId, provider])
+  @@map("social_accounts")
+}
+
+model SocialPost {
+  id         String         @id @default(cuid())
+  businessId String
+  title      String
+  caption    String
+  media      Json           @default("[]")
+  targets    String[]
+  scheduleAt DateTime?
+  status     SocialStatus   @default(DRAFT)
+  results    Json           @default("{}")
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  // Relations
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("social_posts")
+}
+
+model EventSync {
+  id           String        @id @default(cuid())
+  businessId   String
+  listingId    String
+  targets      String[]
+  externalIds  Json          @default("{}")
+  status       EventStatus   @default(DRAFT)
+  lastSyncAt   DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  // Relations
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  listing  Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("event_syncs")
+}
+
+model WebhookEndpoint {
+  id        String   @id @default(cuid())
+  businessId String
+  url       String
+  secret    String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("webhook_endpoints")
+}
+
+model WebhookDelivery {
+  id           String   @id @default(cuid())
+  endpointId   String
+  payload      Json
+  status       Int
+  duration     Int?
+  response     String?
+  createdAt    DateTime @default(now())
+
+  @@map("webhook_deliveries")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  businessId String
+  actorUserId String
+  action     String
+  entity     String
+  entityId   String?
+  meta       Json     @default("{}")
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  // Relations
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  actor    User     @relation(fields: [actorUserId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  businessId  String
+  name        String
+  hash        String
+  lastUsedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("api_keys")
+}
+
+model Coupon {
+  id         String       @id @default(cuid())
+  businessId String
+  code       String
+  discountType DiscountType
+  value      Decimal
+  currency   String?
+  startsAt   DateTime?
+  endsAt     DateTime?
+  maxUses    Int?
+  usedCount  Int          @default(0)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  // Relations
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@unique([businessId, code])
+  @@map("coupons")
+}
+
+model LoyaltyLedger {
+  id         String   @id @default(cuid())
+  businessId String
+  customerId String
+  delta      Int
+  reason     String
+  orderId    String?
+  createdAt  DateTime @default(now())
+
+  // Relations
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id])
+  order    Order?   @relation(fields: [orderId], references: [id])
+
+  @@map("loyalty_ledgers")
+}
+
+// Enums
+enum Role {
+  ADMIN
+  MANAGER
+  STAFF
+  INFLUENCER
+}
+
+enum ListingType {
+  RESTAURANT
+  RETREAT
+  EVENT
+  ACTIVITY
+  PROPERTY
+}
+
+enum ListingStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  REFUNDED
+  CANCELLED
+}
+
+enum PaymentProvider {
+  STRIPE
+  RAZORPAY
+  TEST
+}
+
+enum PaymentStatus {
+  AUTHORIZED
+  CAPTURED
+  REFUNDED
+  FAILED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SocialProvider {
+  INSTAGRAM
+  FACEBOOK
+  TIKTOK
+  GBP
+}
+
+enum SocialStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  FAILED
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  UPDATED
+  FAILED
+}
+
+enum DiscountType {
+  PCT
+  AMOUNT
+}
