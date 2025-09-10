@@ -1,26 +1,29 @@
-import { nanoid } from 'nanoid';
+import { nanoid } from "nanoid";
 
-export function createId(prefix?: string): string {
-  const id = nanoid(12);
-  return prefix ? `${prefix}_${id}` : id;
-}
+// Generate unique IDs
+export const generateId = (): string => {
+  return nanoid();
+};
 
-export function createOrderId(): string {
-  return `ord_${nanoid(8).toUpperCase()}`;
-}
+// Generate short IDs for public use
+export const generateShortId = (): string => {
+  return nanoid(8);
+};
 
-export function createPaymentId(): string {
-  return `pay_${nanoid(8).toUpperCase()}`;
-}
+// Generate long IDs for internal use
+export const generateLongId = (): string => {
+  return nanoid(21);
+};
 
-export function createWebhookId(): string {
-  return `wh_${nanoid(8)}`;
-}
+// Generate IDs with custom length
+export const generateCustomId = (length: number): string => {
+  return nanoid(length);
+};
 
-export function createApiKeyId(): string {
-  return `ak_${nanoid(8)}`;
-}
+// Generate IDs with custom alphabet
+export const generateCustomAlphabetId = (alphabet: string, length: number): string => {
+  return nanoid(length, alphabet);
+};
 
-export function createCouponCode(): string {
-  return nanoid(8).toUpperCase();
-}
+// Re-export nanoid for direct use
+export { nanoid };

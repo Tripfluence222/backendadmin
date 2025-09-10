@@ -13,6 +13,15 @@ export const updateReviewSchema = z.object({
   reply: z.string().max(500).optional(),
 });
 
+export const moderateReviewSchema = z.object({
+  status: z.nativeEnum(ReviewStatus),
+  reason: z.string().max(500).optional(),
+});
+
+export const replyToReviewSchema = z.object({
+  reply: z.string().min(1).max(500),
+});
+
 export const reviewFiltersSchema = z.object({
   status: z.nativeEnum(ReviewStatus).optional(),
   listingId: z.string().cuid().optional(),
@@ -23,4 +32,6 @@ export const reviewFiltersSchema = z.object({
 
 export type CreateReviewInput = z.infer<typeof createReviewSchema>;
 export type UpdateReviewInput = z.infer<typeof updateReviewSchema>;
+export type ModerateReviewInput = z.infer<typeof moderateReviewSchema>;
+export type ReplyToReviewInput = z.infer<typeof replyToReviewSchema>;
 export type ReviewFilters = z.infer<typeof reviewFiltersSchema>;

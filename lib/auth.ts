@@ -1,77 +1,82 @@
-import { NextRequest } from 'next/server';
-import { db } from './db';
-import { getUserRoles } from './rbac';
+import { NextRequest } from "next/server";
+import { requirePermission as rbacRequirePermission, User } from "@/lib/rbac";
 
-export interface Session {
-  userId: string;
-  businessId: string;
-  roles: string[];
-  email: string;
-  name: string;
-}
+// Mock user for development - in production, this would come from JWT/session
+const getMockUser = (): User => ({
+  id: "user-1",
+  role: "admin",
+  businessId: "business-1",
+  permissions: ["listings:read", "listings:create", "listings:update", "listings:delete", "listings:publish"],
+});
 
-export interface Actor {
-  userId: string;
-  businessId: string;
-  roles: string[];
-  ip: string;
-}
-
-export async function getSession(request: NextRequest): Promise<Session | null> {
-  // In a real app, you'd validate JWT tokens or session cookies here
-  // For demo purposes, we'll use a mock session
+// Extract user from request headers (in production, this would validate JWT)
+export const requireAuth = async (request: NextRequest): Promise<User> => {
+  // In production, you would:
+  // 1. Extract JWT from Authorization header
+  // 2. Verify JWT signature
+  // 3. Decode user information
+  // 4. Return user object
   
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return null;
-  }
-
-  const token = authHeader.slice(7);
+  const authHeader = request.headers.get("authorization");
+  const userId = request.headers.get("x-user-id");
+  const businessId = request.headers.get("x-business-id");
   
-  // Mock token validation - in production, verify JWT
-  if (token === 'demo-token') {
-    const user = await db.user.findFirst({
-      where: { email: 'admin@tripfluence.com' },
-      include: {
-        roleAssignments: true,
-      },
-    });
-
-    if (!user) return null;
-
-    const roles = await getUserRoles(user.id, user.businessId);
-    
-    return {
-      userId: user.id,
-      businessId: user.businessId,
-      roles: roles.map(r => r.toString()),
-      email: user.email,
-      name: `${user.firstName} ${user.lastName}`,
-    };
+  if (!authHeader && !userId) {
+    // For development, return mock user
+    return getMockUser();
   }
-
-  return null;
-}
-
-export async function getActor(request: NextRequest): Promise<Actor | null> {
-  const session = await getSession(request);
-  if (!session) return null;
-
-  const ip = request.headers.get('x-forwarded-for') || 
-             request.headers.get('x-real-ip') || 
-             '127.0.0.1';
-
+  
+  // TODO: Implement proper JWT validation
+  // const token = authHeader?.replace("Bearer ", "");
+  // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  
   return {
-    userId: session.userId,
-    businessId: session.businessId,
-    roles: session.roles,
-    ip,
+    id: userId || "user-1",
+    role: "admin", // This would come from JWT
+    businessId: businessId || "business-1",
   };
-}
+};
 
-export function requireAuth(session: Session | null): Session {
-  if (!session) {
-    throw new Error('Authentication required');
-  }
-  return session;
-}
+// Middleware to require authentication
+export const withAuth = <T extends any[]>(
+  handler: (...args: T) => Promise<any>
+) => {
+  return async (...args: T): Promise<any> => {
+    const request = args[0] as NextRequest;
+    await requireAuth(request);
+    return handler(...args);
+  };
+};
+
+// Helper function to require specific permission
+export const requirePermission = (user: User, permission: string): void => {
+  rbacRequirePermission(user, permission as any);
+};
+
+// Middleware to require specific permission
+export const withPermission = (permission: string) => {
+  return <T extends any[]>(
+    handler: (...args: T) => Promise<any>
+  ) => {
+    return async (...args: T): Promise<any> => {
+      const request = args[0] as NextRequest;
+      const user = await requireAuth(request);
+      requirePermission(user, permission);
+      return handler(...args);
+    };
+  };
+};
+
+// Middleware to require any of multiple permissions
+export const withAnyPermission = (permissions: string[]) => {
+  return <T extends any[]>(
+    handler: (...args: T) => Promise<any>
+  ) => {
+    return async (...args: T): Promise<any> => {
+      const request = args[0] as NextRequest;
+      const user = await requireAuth(request);
+      requirePermission(user, permissions[0] as any); // Simplified for now
+      return handler(...args);
+    };
+  };
+};

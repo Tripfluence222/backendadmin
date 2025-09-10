@@ -235,20 +235,36 @@ model Review {
 }
 
 model SocialAccount {
-  id         String           @id @default(cuid())
-  businessId String
-  provider   SocialProvider
-  token      String
-  scopes     String[]
-  metadata   Json             @default("{}")
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
+  id           String         @id @default(cuid())
+  businessId   String
+  provider     SocialProvider
+  accessToken  String
+  refreshToken String?
+  expiresAt    DateTime?
+  accountId    String         // page id / ig-user id / location id / org id / group id
+  accountName  String?
+  scopes       String[]       // granted scopes
+  metadata     Json           @default("{}")
+  isActive     Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   // Relations
   business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
-  @@unique([businessId, provider])
+  @@unique([businessId, provider, accountId])
   @@map("social_accounts")
+}
+
+model ProviderAuthState {
+  id           String   @id @default(cuid())
+  businessId   String
+  provider     String
+  state        String   // CSRF state
+  codeVerifier String?
+  createdAt    DateTime @default(now())
+
+  @@map("provider_auth_states")
 }
 
 model SocialPost {
@@ -434,10 +450,11 @@ enum ReviewStatus {
 }
 
 enum SocialProvider {
-  INSTAGRAM
-  FACEBOOK
-  TIKTOK
-  GBP
+  FACEBOOK_PAGE
+  INSTAGRAM_BUSINESS
+  GOOGLE_BUSINESS
+  EVENTBRITE
+  MEETUP
 }
 
 enum SocialStatus {

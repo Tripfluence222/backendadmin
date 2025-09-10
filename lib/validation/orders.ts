@@ -25,9 +25,23 @@ export const capturePaymentSchema = z.object({
   paymentIntentId: z.string(),
 });
 
+export const updateOrderSchema = z.object({
+  status: z.nativeEnum(OrderStatus).optional(),
+  customerEmail: z.string().email().optional(),
+  customerName: z.string().min(1).max(100).optional(),
+  customerPhone: z.string().optional(),
+  metadata: z.record(z.any()).optional(),
+});
+
 export const refundOrderSchema = z.object({
   reason: z.string().max(500).optional(),
   amount: z.number().positive().optional(), // Partial refund
+});
+
+export const rescheduleOrderSchema = z.object({
+  newDate: z.string().datetime(),
+  newTime: z.string().optional(),
+  reason: z.string().max(500).optional(),
 });
 
 export const orderFiltersSchema = z.object({
@@ -43,5 +57,7 @@ export type CartItem = z.infer<typeof cartItemSchema>;
 export type PriceCartInput = z.infer<typeof priceCartSchema>;
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 export type CapturePaymentInput = z.infer<typeof capturePaymentSchema>;
+export type UpdateOrderInput = z.infer<typeof updateOrderSchema>;
 export type RefundOrderInput = z.infer<typeof refundOrderSchema>;
+export type RescheduleOrderInput = z.infer<typeof rescheduleOrderSchema>;
 export type OrderFilters = z.infer<typeof orderFiltersSchema>;
