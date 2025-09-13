@@ -40,6 +40,13 @@ export const Permission = z.enum([
   "social:schedule",
   "social:accounts:manage",
   
+  // Integrations
+  "integrations:read",
+  "integrations:reconnect",
+  "integrations:disconnect",
+  "integrations:refresh",
+  "integrations:test",
+  
   // Event Sync
   "eventsync:read",
   "eventsync:create",
@@ -81,6 +88,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     "availability:read", "availability:create", "availability:update", "availability:delete", "availability:import", "availability:export",
     "widgets:read", "widgets:create", "widgets:update", "widgets:delete", "widgets:generate",
     "social:read", "social:post", "social:schedule", "social:accounts:manage",
+    "integrations:read", "integrations:reconnect", "integrations:disconnect", "integrations:refresh", "integrations:test",
     "eventsync:read", "eventsync:create", "eventsync:update", "eventsync:delete", "eventsync:publish",
     "marketing:read", "marketing:coupons:manage", "marketing:affiliates:manage", "marketing:loyalty:manage", "marketing:campaigns:manage",
     "reports:read", "reports:export",
@@ -94,6 +102,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     "availability:read", "availability:create", "availability:update", "availability:delete", "availability:import", "availability:export",
     "widgets:read", "widgets:create", "widgets:update", "widgets:generate",
     "social:read", "social:post", "social:schedule",
+    "integrations:read", "integrations:reconnect", "integrations:disconnect", "integrations:refresh", "integrations:test",
     "eventsync:read", "eventsync:create", "eventsync:update", "eventsync:publish",
     "marketing:read", "marketing:coupons:manage", "marketing:affiliates:manage", "marketing:loyalty:manage",
     "reports:read", "reports:export",
@@ -119,6 +128,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     "availability:read",
     "widgets:read",
     "social:read", "social:post", "social:schedule",
+    "integrations:read", "integrations:reconnect", "integrations:test",
     "eventsync:read",
     "marketing:read",
     "reports:read",

@@ -1,0 +1,110 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8] [cursor=pointer]
+  - alert [ref=e11]
+  - generic [ref=e12]:
+    - generic [ref=e14]:
+      - generic [ref=e16]:
+        - generic [ref=e18]: T
+        - generic [ref=e19]: Tripfluence
+      - navigation [ref=e20]:
+        - link "Dashboard" [ref=e21] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e22] [cursor=pointer]
+          - generic [ref=e27] [cursor=pointer]: Dashboard
+        - link "Listings" [ref=e28] [cursor=pointer]:
+          - /url: /listings
+          - img [ref=e29] [cursor=pointer]
+          - generic [ref=e30] [cursor=pointer]: Listings
+        - link "Spaces" [ref=e31] [cursor=pointer]:
+          - /url: /spaces
+          - img [ref=e32] [cursor=pointer]
+          - generic [ref=e36] [cursor=pointer]: Spaces
+        - link "Space Requests" [ref=e37] [cursor=pointer]:
+          - /url: /space-requests
+          - img [ref=e38] [cursor=pointer]
+          - generic [ref=e40] [cursor=pointer]: Space Requests
+        - link "Space Pricing" [ref=e41] [cursor=pointer]:
+          - /url: /space-pricing
+          - img [ref=e42] [cursor=pointer]
+          - generic [ref=e44] [cursor=pointer]: Space Pricing
+        - link "Availability" [ref=e45] [cursor=pointer]:
+          - /url: /availability
+          - img [ref=e46] [cursor=pointer]
+          - generic [ref=e48] [cursor=pointer]: Availability
+        - link "Orders 3" [ref=e49] [cursor=pointer]:
+          - /url: /orders
+          - img [ref=e50] [cursor=pointer]
+          - generic [ref=e54] [cursor=pointer]: Orders
+          - generic [ref=e55] [cursor=pointer]: "3"
+        - link "Customers" [ref=e56] [cursor=pointer]:
+          - /url: /customers
+          - img [ref=e57] [cursor=pointer]
+          - generic [ref=e62] [cursor=pointer]: Customers
+        - link "Reviews" [ref=e63] [cursor=pointer]:
+          - /url: /reviews
+          - img [ref=e64] [cursor=pointer]
+          - generic [ref=e66] [cursor=pointer]: Reviews
+        - link "Widgets" [ref=e67] [cursor=pointer]:
+          - /url: /widgets
+          - img [ref=e68] [cursor=pointer]
+          - generic [ref=e70] [cursor=pointer]: Widgets
+        - link "Social" [ref=e71] [cursor=pointer]:
+          - /url: /social
+          - img [ref=e72] [cursor=pointer]
+          - generic [ref=e78] [cursor=pointer]: Social
+        - link "Event Sync" [ref=e79] [cursor=pointer]:
+          - /url: /event-sync
+          - img [ref=e80] [cursor=pointer]
+          - generic [ref=e82] [cursor=pointer]: Event Sync
+        - link "Integrations" [ref=e83] [cursor=pointer]:
+          - /url: /integrations
+          - img [ref=e84] [cursor=pointer]
+          - generic [ref=e86] [cursor=pointer]: Integrations
+        - link "Marketing" [ref=e87] [cursor=pointer]:
+          - /url: /marketing
+          - img [ref=e88] [cursor=pointer]
+          - generic [ref=e91] [cursor=pointer]: Marketing
+        - link "Reports" [ref=e92] [cursor=pointer]:
+          - /url: /reports
+          - img [ref=e93] [cursor=pointer]
+          - generic [ref=e95] [cursor=pointer]: Reports
+        - link "Settings" [ref=e96] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e97] [cursor=pointer]
+          - generic [ref=e100] [cursor=pointer]: Settings
+      - generic [ref=e102]:
+        - generic [ref=e104]: AD
+        - generic [ref=e105]:
+          - paragraph [ref=e106]: Admin User
+          - paragraph [ref=e107]: admin@tripfluence.com
+    - generic [ref=e108]:
+      - banner [ref=e109]:
+        - generic [ref=e111]:
+          - img [ref=e112]
+          - searchbox "Search..." [ref=e115]
+        - generic [ref=e116]:
+          - button "Toggle theme" [ref=e117]:
+            - img [ref=e118]
+            - generic [ref=e124]: Toggle theme
+          - button "5 Notifications" [ref=e125]:
+            - img [ref=e126]
+            - generic [ref=e129]: "5"
+            - generic [ref=e130]: Notifications
+          - button "AD" [ref=e131]:
+            - generic [ref=e133]: AD
+      - main [ref=e134]:
+        - generic [ref=e135]:
+          - generic [ref=e136]:
+            - heading "Dashboard" [level=1] [ref=e137]
+            - paragraph [ref=e138]: Welcome back! Here's what's happening with your business today.
+          - generic [ref=e139]:
+            - heading "Loading..." [level=3] [ref=e142]
+            - heading "Loading..." [level=3] [ref=e149]
+            - heading "Loading..." [level=3] [ref=e156]
+            - heading "Loading..." [level=3] [ref=e163]
+  - region "Notifications alt+T"
+```

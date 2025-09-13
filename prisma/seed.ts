@@ -1,4 +1,4 @@
-import { PrismaClient, Role, ListingType, ListingStatus, OrderStatus, PaymentStatus, PaymentProvider, ReviewStatus, SocialProvider, SocialStatus, EventStatus, DiscountType } from '@prisma/client';
+import { PrismaClient, Role, ListingType, ListingStatus, OrderStatus, PaymentStatus, PaymentProvider, ReviewStatus, SocialProvider, SocialStatus, EventStatus, DiscountType, SpaceStatus, PricingKind, SpaceReqStatus } from '@prisma/client';
 import { createOrderId, createPaymentId, createCouponCode } from '../lib/ids';
 import bcrypt from 'bcryptjs';
 
@@ -756,6 +756,411 @@ async function main() {
 
   console.log('✅ Created audit logs');
 
+  // Create demo spaces for rental
+  const spaces = await Promise.all([
+    prisma.space.create({
+      data: {
+        businessId: business.id,
+        title: 'Zen Yoga Studio',
+        slug: 'zen-yoga-studio',
+        description: 'A peaceful yoga studio with natural light, perfect for classes and private sessions. Features hardwood floors, mirrors, and a serene atmosphere.',
+        photos: [
+          'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800',
+          'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800',
+        ],
+        location: {
+          address: '123 Wellness Way, San Francisco, CA 94102',
+          lat: 37.7749,
+          lng: -122.4194,
+        },
+        capacity: 25,
+        floorAreaM2: 80,
+        status: SpaceStatus.PUBLISHED,
+      },
+    }),
+    prisma.space.create({
+      data: {
+        businessId: business.id,
+        title: 'Cozy Café Corner',
+        slug: 'cozy-cafe-corner',
+        description: 'A charming café space perfect for small gatherings, workshops, and intimate events. Features comfortable seating and a warm atmosphere.',
+        photos: [
+          'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800',
+          'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800',
+        ],
+        location: {
+          address: '456 Coffee Street, San Francisco, CA 94103',
+          lat: 37.7849,
+          lng: -122.4094,
+        },
+        capacity: 15,
+        floorAreaM2: 45,
+        status: SpaceStatus.PUBLISHED,
+      },
+    }),
+    prisma.space.create({
+      data: {
+        businessId: business.id,
+        title: 'Modern Meeting Room',
+        slug: 'modern-meeting-room',
+        description: 'A professional meeting room equipped with modern technology, perfect for business meetings, presentations, and workshops.',
+        photos: [
+          'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800',
+          'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800',
+        ],
+        location: {
+          address: '789 Business Blvd, San Francisco, CA 94104',
+          lat: 37.7949,
+          lng: -122.3994,
+        },
+        capacity: 12,
+        floorAreaM2: 35,
+        status: SpaceStatus.DRAFT,
+      },
+    }),
+  ]);
+
+  console.log('✅ Created spaces:', spaces.length);
+
+  // Create space amenities
+  const amenities = [];
+  for (const space of spaces) {
+    if (space.title === 'Zen Yoga Studio') {
+      amenities.push(
+        prisma.spaceAmenity.create({
+          data: {
+            spaceId: space.id,
+            label: 'Yoga Mats',
+            category: 'Equipment',
+          },
+        }),
+        prisma.spaceAmenity.create({
+          data: {
+            spaceId: space.id,
+            label: 'Mirrors',
+            category: 'Equipment',
+          },
+        }),
+        prisma.spaceAmenity.create({
+          data: {
+            spaceId: space.id,
+            label: 'Sound System',
+            category: 'Audio',
+          },
+        }),
+        prisma.spaceAmenity.create({
+          data: {
+            spaceId: space.id,
+            label: 'Natural Light',
+            category: 'Lighting',
+          },
+        })
+      );
+    } else if (space.title === 'Cozy Café Corner') {
+      amenities.push(
+        prisma.spaceAmenity.create({
+          data: {
+            spaceId: space.id,
+            label: 'Coffee Machine',
+            category: 'Kitchen',
+          },
+        }),
+        prisma.spaceAmenity.create({
+          data: {
+            spaceId: space.id,
+            label: 'WiFi',
+            category: 'Technology',
+          },
+        }),
+        prisma.spaceAmenity.create({
+          data: {
+            spaceId: space.id,
+            label: 'Comfortable Seating',
+            category: 'Seating',
+          },
+        })
+      );
+    } else {
+      amenities.push(
+        prisma.spaceAmenity.create({
+          data: {
+            spaceId: space.id,
+            label: 'Projector',
+            category: 'Technology',
+          },
+        }),
+        prisma.spaceAmenity.create({
+          data: {
+            spaceId: space.id,
+            label: 'Whiteboard',
+            category: 'Equipment',
+          },
+        }),
+        prisma.spaceAmenity.create({
+          data: {
+            spaceId: space.id,
+            label: 'WiFi',
+            category: 'Technology',
+          },
+        })
+      );
+    }
+  }
+
+  await Promise.all(amenities);
+  console.log('✅ Created space amenities:', amenities.length);
+
+  // Create space rules
+  const rules = [];
+  for (const space of spaces) {
+    rules.push(
+      prisma.spaceRule.create({
+        data: {
+          spaceId: space.id,
+          label: 'No shoes on the floor',
+          required: true,
+        },
+      }),
+      prisma.spaceRule.create({
+        data: {
+          spaceId: space.id,
+          label: 'Quiet after 9pm',
+          required: true,
+        },
+      }),
+      prisma.spaceRule.create({
+        data: {
+          spaceId: space.id,
+          label: 'No smoking',
+          required: true,
+        },
+      })
+    );
+  }
+
+  await Promise.all(rules);
+  console.log('✅ Created space rules:', rules.length);
+
+  // Create pricing rules
+  const pricingRules = [];
+  for (const space of spaces) {
+    // Base hourly rate
+    pricingRules.push(
+      prisma.spacePricingRule.create({
+        data: {
+          spaceId: space.id,
+          kind: PricingKind.HOURLY,
+          amount: space.title === 'Zen Yoga Studio' ? 5000 : space.title === 'Cozy Café Corner' ? 3000 : 4000, // $50, $30, $40
+          currency: 'USD',
+        },
+      })
+    );
+
+    // Peak pricing (weekends)
+    pricingRules.push(
+      prisma.spacePricingRule.create({
+        data: {
+          spaceId: space.id,
+          kind: PricingKind.PEAK,
+          amount: space.title === 'Zen Yoga Studio' ? 7500 : space.title === 'Cozy Café Corner' ? 4500 : 6000, // $75, $45, $60
+          currency: 'USD',
+          dow: [0, 6], // Sunday and Saturday
+        },
+      })
+    );
+
+    // Cleaning fee
+    pricingRules.push(
+      prisma.spacePricingRule.create({
+        data: {
+          spaceId: space.id,
+          kind: PricingKind.CLEANING_FEE,
+          amount: 2000, // $20
+          currency: 'USD',
+        },
+      })
+    );
+
+    // Security deposit
+    pricingRules.push(
+      prisma.spacePricingRule.create({
+        data: {
+          spaceId: space.id,
+          kind: PricingKind.SECURITY_DEPOSIT,
+          amount: 10000, // $100
+          currency: 'USD',
+        },
+      })
+    );
+  }
+
+  await Promise.all(pricingRules);
+  console.log('✅ Created pricing rules:', pricingRules.length);
+
+  // Create availability blocks
+  const availabilityBlocks = [];
+  for (const space of spaces.slice(0, 2)) { // Only for published spaces
+    for (let i = 0; i < 10; i++) {
+      const start = new Date();
+      start.setDate(start.getDate() + i * 3); // Every 3 days
+      start.setHours(9, 0, 0, 0);
+      
+      const end = new Date(start);
+      end.setHours(21, 0, 0, 0); // 9 AM to 9 PM
+      
+      availabilityBlocks.push(
+        prisma.spaceAvailability.create({
+          data: {
+            spaceId: space.id,
+            start,
+            end,
+            isBlocked: false,
+            notes: `Available for booking - ${space.title}`,
+          },
+        })
+      );
+    }
+  }
+
+  await Promise.all(availabilityBlocks);
+  console.log('✅ Created availability blocks:', availabilityBlocks.length);
+
+  // Create space requests
+  const spaceRequests = await Promise.all([
+    prisma.spaceRequest.create({
+      data: {
+        businessId: business.id,
+        spaceId: spaces[0].id,
+        organizerId: customers[0].id,
+        title: 'Morning Yoga Class',
+        description: 'Weekly yoga class for beginners',
+        attendees: 15,
+        start: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week
+        end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000), // 2 hours later
+        status: SpaceReqStatus.PENDING,
+        quoteAmount: 7500, // $75 (peak weekend rate)
+        currency: 'USD',
+        depositAmount: 10000, // $100
+        cleaningFee: 2000, // $20
+        pricingBreakdown: {
+          base: 5000,
+          peak: 2500,
+          cleaning: 2000,
+          deposit: 10000,
+          total: 7500,
+        },
+      },
+    }),
+    prisma.spaceRequest.create({
+      data: {
+        businessId: business.id,
+        spaceId: spaces[1].id,
+        organizerId: customers[1].id,
+        title: 'Book Club Meeting',
+        description: 'Monthly book club gathering',
+        attendees: 8,
+        start: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // In 2 weeks
+        end: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000), // 3 hours later
+        status: SpaceReqStatus.NEEDS_PAYMENT,
+        holdExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+        quoteAmount: 11000, // $110 (3 hours + cleaning)
+        currency: 'USD',
+        depositAmount: 10000, // $100
+        cleaningFee: 2000, // $20
+        pricingBreakdown: {
+          base: 9000, // 3 hours * $30
+          cleaning: 2000,
+          deposit: 10000,
+          total: 11000,
+        },
+      },
+    }),
+    prisma.spaceRequest.create({
+      data: {
+        businessId: business.id,
+        spaceId: spaces[0].id,
+        organizerId: customers[2].id,
+        title: 'Corporate Wellness Session',
+        description: 'Team building yoga session for our company',
+        attendees: 20,
+        start: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000), // In 3 weeks
+        end: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000), // 2 hours later
+        status: SpaceReqStatus.CONFIRMED,
+        quoteAmount: 12000, // $120 (2 hours + cleaning + deposit)
+        currency: 'USD',
+        depositAmount: 10000, // $100
+        cleaningFee: 2000, // $20
+        pricingBreakdown: {
+          base: 10000, // 2 hours * $50
+          cleaning: 2000,
+          deposit: 10000,
+          total: 12000,
+        },
+      },
+    }),
+  ]);
+
+  console.log('✅ Created space requests:', spaceRequests.length);
+
+  // Create space messages
+  const messages = await Promise.all([
+    prisma.spaceMessage.create({
+      data: {
+        spaceReqId: spaceRequests[0].id,
+        senderId: customers[0].id,
+        body: 'Hi! I\'m interested in booking your yoga studio for a weekly class. Would it be possible to have the same time slot every week?',
+      },
+    }),
+    prisma.spaceMessage.create({
+      data: {
+        spaceReqId: spaceRequests[0].id,
+        senderId: users[0].id,
+        body: 'Hello! Yes, we can definitely accommodate a recurring weekly booking. I\'ve sent you a quote for the first session. Please let me know if you have any questions!',
+      },
+    }),
+    prisma.spaceMessage.create({
+      data: {
+        spaceReqId: spaceRequests[1].id,
+        senderId: customers[1].id,
+        body: 'Thank you for approving our book club meeting! I\'ll process the payment shortly.',
+      },
+    }),
+  ]);
+
+  console.log('✅ Created space messages:', messages.length);
+
+  // Create payout account (mock Stripe)
+  const payoutAccount = await prisma.payoutAccount.create({
+    data: {
+      businessId: business.id,
+      provider: 'STRIPE',
+      accountId: 'acct_mock_stripe_12345',
+      status: 'COMPLETE',
+    },
+  });
+
+  console.log('✅ Created payout account');
+
+  // Create payouts
+  await prisma.payout.create({
+    data: {
+      businessId: business.id,
+      spaceReqId: spaceRequests[2].id,
+      amount: 12000, // $120
+      currency: 'USD',
+      provider: 'STRIPE',
+      externalId: 'tr_mock_stripe_12345',
+      status: 'PENDING',
+      payoutAccount: {
+        connect: {
+          businessId: business.id,
+        },
+      },
+    },
+  });
+
+  console.log('✅ Created payout');
+
   console.log('🎉 Database seed completed successfully!');
   console.log(`
 📊 Summary:
@@ -773,6 +1178,15 @@ async function main() {
 - Coupons: 3
 - Loyalty Entries: 3
 - Audit Logs: 5
+- Spaces: ${spaces.length} (2 published, 1 draft)
+- Space Amenities: ${amenities.length}
+- Space Rules: ${rules.length}
+- Pricing Rules: ${pricingRules.length}
+- Availability Blocks: ${availabilityBlocks.length}
+- Space Requests: ${spaceRequests.length} (1 pending, 1 needs payment, 1 confirmed)
+- Space Messages: ${messages.length}
+- Payout Account: 1 (Stripe)
+- Payouts: 1 (pending)
 
 🔑 Demo Login:
 - Admin: admin@tripfluence.com

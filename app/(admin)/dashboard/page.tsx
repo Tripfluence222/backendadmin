@@ -90,7 +90,7 @@ export default function DashboardPage() {
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card data-testid="metric-card-revenue">
+        <Card data-testid="metric-card" data-testid="metric-card-revenue">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -103,7 +103,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card data-testid="metric-card-bookings">
+        <Card data-testid="metric-card" data-testid="metric-card-bookings">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
@@ -116,7 +116,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card data-testid="metric-card-customers">
+        <Card data-testid="metric-card" data-testid="metric-card-customers">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -129,7 +129,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card data-testid="metric-card-social">
+        <Card data-testid="metric-card" data-testid="metric-card-social">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Social Reach</CardTitle>
             <Share2 className="h-4 w-4 text-muted-foreground" />

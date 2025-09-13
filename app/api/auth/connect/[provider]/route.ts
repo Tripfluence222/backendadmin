@@ -1,73 +1,32 @@
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { db } from "@/lib/db";
-import { ok, badReq, serverErr } from "@/lib/http";
-import { requireAuth } from "@/lib/auth";
-import { logAction, AUDIT_ACTIONS } from "@/lib/audit";
-import { nanoid } from "@/lib/ids";
-import { env } from "@/lib/env";
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { db } from '@/lib/db';
+import { logAction } from '@/lib/audit';
+import { rbacServer } from '@/lib/rbac-server';
+import { SocialProvider } from '@prisma/client';
+import { randomBytes } from 'crypto';
 
-const providerSchema = z.enum(["facebook", "google", "eventbrite", "meetup"]);
 const connectSchema = z.object({
   businessId: z.string().cuid(),
+  provider: z.nativeEnum(SocialProvider),
 });
 
 // OAuth scopes for each provider
 const PROVIDER_SCOPES = {
-  facebook: [
-    "pages_manage_metadata",
-    "pages_manage_posts", 
-    "pages_read_engagement",
-    "pages_read_user_content",
-    "pages_manage_events",
-    "instagram_basic",
-    "instagram_content_publish"
-  ].join(","),
-  google: "https://www.googleapis.com/auth/business.manage",
-  eventbrite: "events.write organizers.read organizers.write",
-  meetup: "group_content_edit",
+  FACEBOOK_PAGE: ['pages_manage_posts', 'pages_read_engagement', 'pages_show_list', 'instagram_basic', 'instagram_content_publish'],
+  INSTAGRAM_BUSINESS: ['instagram_basic', 'instagram_content_publish', 'pages_show_list'],
+  GOOGLE_BUSINESS: ['https://www.googleapis.com/auth/business.manage'],
+  EVENTBRITE: ['event:read', 'event:write', 'user:read'],
+  MEETUP: ['ageless', 'group_edit', 'event_management'],
 };
 
 // OAuth URLs for each provider
-const getOAuthUrl = (provider: string, state: string, businessId: string): string => {
-  const redirectUri = `${env.OAUTH_REDIRECT_BASE || "http://localhost:3000"}/api/auth/callback/${provider}`;
-  
-  switch (provider) {
-    case "facebook":
-      return `https://www.facebook.com/v18.0/dialog/oauth?` +
-        `client_id=${env.FACEBOOK_APP_ID}&` +
-        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-        `scope=${encodeURIComponent(PROVIDER_SCOPES.facebook)}&` +
-        `state=${state}&` +
-        `response_type=code`;
-        
-    case "google":
-      return `https://accounts.google.com/o/oauth2/v2/auth?` +
-        `client_id=${env.GOOGLE_CLIENT_ID}&` +
-        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-        `scope=${encodeURIComponent(PROVIDER_SCOPES.google)}&` +
-        `state=${state}&` +
-        `response_type=code&` +
-        `access_type=offline&` +
-        `prompt=consent`;
-        
-    case "eventbrite":
-      return `https://www.eventbrite.com/oauth/authorize?` +
-        `response_type=code&` +
-        `client_id=${env.EVENTBRITE_CLIENT_ID}&` +
-        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-        `state=${state}`;
-        
-    case "meetup":
-      return `https://secure.meetup.com/oauth2/authorize?` +
-        `client_id=${env.MEETUP_CLIENT_ID}&` +
-        `response_type=code&` +
-        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-        `state=${state}`;
-        
-    default:
-      throw new Error(`Unsupported provider: ${provider}`);
-  }
+const PROVIDER_AUTH_URLS = {
+  FACEBOOK_PAGE: 'https://www.facebook.com/v18.0/dialog/oauth',
+  INSTAGRAM_BUSINESS: 'https://www.facebook.com/v18.0/dialog/oauth',
+  GOOGLE_BUSINESS: 'https://accounts.google.com/o/oauth2/v2/auth',
+  EVENTBRITE: 'https://www.eventbrite.com/oauth/authorize',
+  MEETUP: 'https://secure.meetup.com/oauth2/authorize',
 };
 
 export async function GET(
@@ -75,77 +34,118 @@ export async function GET(
   { params }: { params: { provider: string } }
 ) {
   try {
-    const user = await requireAuth(request);
-    
-    // Validate provider
-    const providerResult = providerSchema.safeParse(params.provider);
-    if (!providerResult.success) {
-      return badReq("Invalid provider", providerResult.error.errors);
-    }
-    const provider = providerResult.data;
-    
-    // Validate query parameters
     const { searchParams } = new URL(request.url);
-    const queryResult = connectSchema.safeParse({
-      businessId: searchParams.get("businessId"),
-    });
-    if (!queryResult.success) {
-      return badReq("Invalid query parameters", queryResult.error.errors);
-    }
-    const { businessId } = queryResult.data;
-    
-    // Verify user has access to business
-    if (user.businessId !== businessId) {
+    const businessId = searchParams.get('businessId');
+    const provider = params.provider as SocialProvider;
+
+    // Validate input
+    const validation = connectSchema.safeParse({ businessId, provider });
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Access denied" },
-        { status: 403 }
+        { error: 'Invalid parameters', details: validation.error.errors },
+        { status: 400 }
       );
     }
-    
-    // Check if provider is configured
-    const providerConfig = {
-      facebook: { id: env.FACEBOOK_APP_ID, secret: env.FACEBOOK_APP_SECRET },
-      google: { id: env.GOOGLE_CLIENT_ID, secret: env.GOOGLE_CLIENT_SECRET },
-      eventbrite: { id: env.EVENTBRITE_CLIENT_ID, secret: env.EVENTBRITE_CLIENT_SECRET },
-      meetup: { id: env.MEETUP_CLIENT_ID, secret: env.MEETUP_CLIENT_SECRET },
-    }[provider];
-    
-    if (!providerConfig.id || !providerConfig.secret) {
-      return badReq(`${provider} provider is not configured`);
+
+    const { businessId: validBusinessId, provider: validProvider } = validation.data;
+
+    // Check RBAC permissions
+    const user = await rbacServer.getCurrentUser(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
-    // Generate state and code verifier for PKCE
-    const state = nanoid(32);
-    const codeVerifier = nanoid(128);
-    
-    // Store auth state
+
+    const hasPermission = await rbacServer.checkPermission(
+      user.id,
+      validBusinessId,
+      ['ADMIN', 'MANAGER', 'INFLUENCER']
+    );
+
+    if (!hasPermission) {
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+    }
+
+    // Generate state parameter for OAuth security
+    const state = randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Store state in database
     await db.providerAuthState.create({
       data: {
-        id: nanoid(),
-        businessId,
-        provider,
         state,
-        codeVerifier,
+        provider: validProvider,
+        businessId: validBusinessId,
+        expiresAt,
       },
     });
+
+    // Build OAuth URL
+    const baseUrl = process.env.OAUTH_REDIRECT_BASE || 'http://localhost:3000';
+    const redirectUri = `${baseUrl}/api/auth/callback/${validProvider}`;
     
-    // Generate OAuth URL
-    const oauthUrl = getOAuthUrl(provider, state, businessId);
-    
-    // Log audit action
+    const scopes = PROVIDER_SCOPES[validProvider];
+    const authUrl = PROVIDER_AUTH_URLS[validProvider];
+
+    const params = new URLSearchParams({
+      client_id: getClientId(validProvider),
+      redirect_uri: redirectUri,
+      scope: scopes.join(' '),
+      response_type: 'code',
+      state,
+    });
+
+    // Provider-specific parameters
+    if (validProvider === 'FACEBOOK_PAGE' || validProvider === 'INSTAGRAM_BUSINESS') {
+      params.append('config_id', getConfigId(validProvider));
+    }
+
+    const fullAuthUrl = `${authUrl}?${params.toString()}`;
+
+    // Log the connection attempt
     await logAction(
       user.id,
-      "user",
-      AUDIT_ACTIONS.SOCIAL_ACCOUNT_CONNECTED,
-      "provider_auth",
-      state,
-      businessId,
-      { provider, action: "initiate" }
+      'user',
+      'PROVIDER_CONNECT_ATTEMPT',
+      'SocialAccount',
+      'temp',
+      validBusinessId,
+      { provider: validProvider }
     );
-    
-    return NextResponse.redirect(oauthUrl);
-    
+
+    return NextResponse.json({ authUrl: fullAuthUrl });
+
   } catch (error) {
-    return serverErr("Failed to initiate OAuth flow", error);
+    console.error('OAuth connect error:', error);
+    return NextResponse.json(
+      { error: 'Failed to initiate OAuth connection' },
+      { status: 500 }
+    );
+  }
+}
+
+function getClientId(provider: SocialProvider): string {
+  switch (provider) {
+    case 'FACEBOOK_PAGE':
+    case 'INSTAGRAM_BUSINESS':
+      return process.env.FACEBOOK_APP_ID || '';
+    case 'GOOGLE_BUSINESS':
+      return process.env.GOOGLE_CLIENT_ID || '';
+    case 'EVENTBRITE':
+      return process.env.EVENTBRITE_CLIENT_ID || '';
+    case 'MEETUP':
+      return process.env.MEETUP_CLIENT_ID || '';
+    default:
+      throw new Error(`Unknown provider: ${provider}`);
+  }
+}
+
+function getConfigId(provider: SocialProvider): string {
+  switch (provider) {
+    case 'FACEBOOK_PAGE':
+      return process.env.FACEBOOK_PAGE_CONFIG_ID || '';
+    case 'INSTAGRAM_BUSINESS':
+      return process.env.INSTAGRAM_CONFIG_ID || '';
+    default:
+      return '';
   }
 }

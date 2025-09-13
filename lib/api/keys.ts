@@ -54,6 +54,13 @@ export const queryKeys = {
     },
   },
 
+  // Integrations
+  integrations: {
+    all: ["integrations"] as const,
+    accounts: (businessId: string) => [...queryKeys.integrations.all, "accounts", businessId] as const,
+    logs: (businessId: string) => [...queryKeys.integrations.all, "logs", businessId] as const,
+  },
+
   // Event Sync
   eventSync: {
     all: ["eventSync"] as const,

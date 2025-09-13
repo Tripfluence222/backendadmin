@@ -186,7 +186,7 @@ export function WidgetPreviewModal({ widget, isOpen, onClose }: WidgetPreviewMod
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="border rounded-lg p-8 bg-muted/20">
+              <div data-testid="widget-preview" className="border rounded-lg p-8 bg-muted/20">
                 <div className="text-center">
                   <div 
                     className="inline-block p-6 rounded-lg text-white font-medium"

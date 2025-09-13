@@ -34,6 +34,10 @@ model Business {
   coupons         Coupon[]
   loyaltyLedgers  LoyaltyLedger[]
   roleAssignments RoleAssignment[]
+  spaces          Space[]
+  spaceRequests   SpaceRequest[]
+  payoutAccount   PayoutAccount?
+  payouts         Payout[]
 
   @@map("businesses")
 }
@@ -235,19 +239,21 @@ model Review {
 }
 
 model SocialAccount {
-  id           String         @id @default(cuid())
-  businessId   String
-  provider     SocialProvider
-  accessToken  String
-  refreshToken String?
-  expiresAt    DateTime?
-  accountId    String         // page id / ig-user id / location id / org id / group id
-  accountName  String?
-  scopes       String[]       // granted scopes
-  metadata     Json           @default("{}")
-  isActive     Boolean        @default(true)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id            String         @id @default(cuid())
+  businessId    String
+  provider      SocialProvider
+  accessToken   String
+  refreshToken  String?
+  expiresAt     DateTime?
+  accountId     String         // page id / ig-user id / location id / org id / group id
+  accountName   String?
+  scopes        String[]       // granted scopes
+  lastSuccessAt DateTime?
+  lastErrorAt   DateTime?
+  metadata      Json           @default("{}")
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   // Relations
   business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
@@ -265,6 +271,20 @@ model ProviderAuthState {
   createdAt    DateTime @default(now())
 
   @@map("provider_auth_states")
+}
+
+model WebhookDelivery {
+  id           String   @id @default(cuid())
+  businessId   String
+  endpointId   String?
+  eventType    String
+  status       Int
+  durationMs   Int
+  requestBody  Json?
+  responseBody Json?
+  createdAt    DateTime @default(now())
+
+  @@map("webhook_deliveries")
 }
 
 model SocialPost {
@@ -319,17 +339,6 @@ model WebhookEndpoint {
   @@map("webhook_endpoints")
 }
 
-model WebhookDelivery {
-  id           String   @id @default(cuid())
-  endpointId   String
-  payload      Json
-  status       Int
-  duration     Int?
-  response     String?
-  createdAt    DateTime @default(now())
-
-  @@map("webhook_deliveries")
-}
 
 model AuditLog {
   id         String   @id @default(cuid())
@@ -474,4 +483,185 @@ enum EventStatus {
 enum DiscountType {
   PCT
   AMOUNT
+}
+
+// Space Rental Models
+model Space {
+  id             String   @id @default(cuid())
+  businessId     String
+  title          String
+  slug           String   @unique
+  description    String
+  photos         Json     @default("[]") // string[] urls
+  location       Json     @default("{}") // { address, lat, lng }
+  capacity       Int
+  floorAreaM2    Int?
+  status         SpaceStatus @default(DRAFT)
+  amenities      SpaceAmenity[]
+  rules          SpaceRule[]
+  pricingRules   SpacePricingRule[]
+  calendars      SpaceAvailability[]
+  requests       SpaceRequest[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  business       Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("spaces")
+}
+
+enum SpaceStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model SpaceAmenity {
+  id        String @id @default(cuid())
+  spaceId   String
+  label     String
+  category  String? // e.g., "Audio", "Seating"
+
+  // Relations
+  space     Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@map("space_amenities")
+}
+
+model SpaceRule {
+  id        String @id @default(cuid())
+  spaceId   String
+  label     String   // e.g., "No alcohol", "Quiet after 9pm"
+  required  Boolean  // host requires acceptance
+
+  // Relations
+  space     Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@map("space_rules")
+}
+
+model SpacePricingRule {
+  id        String @id @default(cuid())
+  spaceId   String
+  kind      PricingKind   // HOURLY, DAILY, PEAK, CLEANING_FEE, SECURITY_DEPOSIT
+  amount    Int           // in minor units (cents)
+  currency  String        @default("USD")
+  dow       Int[]         @default([]) // days of week for peak/off-peak
+  startHour Int?          // 0-23
+  endHour   Int?
+
+  // Relations
+  space     Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@map("space_pricing_rules")
+}
+
+enum PricingKind {
+  HOURLY
+  DAILY
+  PEAK
+  CLEANING_FEE
+  SECURITY_DEPOSIT
+}
+
+model SpaceAvailability {
+  id        String @id @default(cuid())
+  spaceId   String
+  start     DateTime
+  end       DateTime
+  isBlocked Boolean @default(false) // blackout
+  notes     String?
+
+  // Relations
+  space     Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@map("space_availability")
+}
+
+model SpaceRequest {
+  id            String   @id @default(cuid())
+  businessId    String
+  spaceId       String
+  organizerId   String   // Customer.id or Business contact
+  title         String
+  description   String?
+  attendees     Int
+  start         DateTime
+  end           DateTime
+  status        SpaceReqStatus @default(PENDING)
+  holdExpiresAt DateTime?
+  quoteAmount   Int      // total in minor units
+  currency      String   @default("USD")
+  depositAmount Int?     // for SECURITY_DEPOSIT
+  cleaningFee   Int?     // optional fee
+  pricingBreakdown Json  @default("{}") // detailed lines for UI
+  messages      SpaceMessage[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  space         Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@map("space_requests")
+}
+
+enum SpaceReqStatus {
+  PENDING
+  NEEDS_PAYMENT
+  PAID_HOLD
+  CONFIRMED
+  DECLINED
+  EXPIRED
+  CANCELLED
+}
+
+model SpaceMessage {
+  id          String @id @default(cuid())
+  spaceReqId  String
+  senderId    String // User id
+  body        String
+  attachments Json?  @default("[]") // string[] urls
+  createdAt   DateTime @default(now())
+
+  // Relations
+  spaceRequest SpaceRequest @relation(fields: [spaceReqId], references: [id], onDelete: Cascade)
+
+  @@map("space_messages")
+}
+
+model PayoutAccount {
+  id           String   @id @default(cuid())
+  businessId   String   @unique
+  provider     String   @default("STRIPE")
+  accountId    String   // stripe account id
+  status       String   @default("REQUIRED") // "REQUIRED", "COMPLETE", etc.
+  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now())
+
+  // Relations
+  business     Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  payouts      Payout[]
+
+  @@map("payout_accounts")
+}
+
+model Payout {
+  id             String   @id @default(cuid())
+  businessId     String
+  spaceReqId     String?
+  amount         Int
+  currency       String   @default("USD")
+  provider       String   @default("STRIPE")
+  externalId     String?  // transfer id
+  status         String   @default("PENDING") // "PENDING", "PAID", "FAILED"
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  business       Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  payoutAccount  PayoutAccount @relation(fields: [businessId], references: [businessId], map: "payouts_payout_account_fkey")
+
+  @@map("payouts")
 }

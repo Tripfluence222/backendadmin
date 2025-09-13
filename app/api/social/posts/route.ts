@@ -1,201 +1,205 @@
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { db } from "@/lib/db";
-import { ok, badReq, serverErr } from "@/lib/http";
-import { requireAuth, requirePermission } from "@/lib/auth";
-import { logAction, AUDIT_ACTIONS } from "@/lib/audit";
-import { addSocialPublishJob } from "@/jobs/queue";
-import { nanoid } from "@/lib/ids";
-import { env } from "@/lib/env";
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { db } from '@/lib/db';
+import { logAction } from '@/lib/audit';
+import { rbacServer } from '@/lib/rbac-server';
+import { addSocialPublishJob } from '@/jobs/queue';
+import { SocialProvider } from '@prisma/client';
 
-const createSocialPostSchema = z.object({
+const createPostSchema = z.object({
   businessId: z.string().cuid(),
-  title: z.string().optional(),
-  caption: z.string().min(1).max(2200), // Instagram limit
-  media: z.array(z.object({
-    url: z.string().url(),
-    type: z.enum(["image", "video"]),
-  })).optional(),
-  targets: z.array(z.enum(["facebook", "instagram", "google"])).min(1),
-  scheduleAt: z.string().datetime().optional(),
+  content: z.string().min(1).max(2000),
+  platforms: z.array(z.enum(['facebook', 'instagram', 'google'])).min(1),
+  mediaUrls: z.array(z.string().url()).optional(),
+  scheduledAt: z.string().datetime().optional(),
 });
 
-const socialPostFiltersSchema = z.object({
+const getPostsSchema = z.object({
   businessId: z.string().cuid(),
-  status: z.enum(["DRAFT", "SCHEDULED", "PUBLISHING", "PUBLISHED", "FAILED"]).optional(),
-  platform: z.string().optional(),
-  page: z.number().int().positive().default(1),
-  limit: z.number().int().positive().max(100).default(20),
+  status: z.enum(['DRAFT', 'SCHEDULED', 'PUBLISHING', 'PUBLISHED', 'FAILED']).optional(),
+  limit: z.coerce.number().min(1).max(100).default(20),
+  offset: z.coerce.number().min(0).default(0),
 });
 
-// GET /api/social/posts - List social posts
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const validation = createPostSchema.safeParse(body);
+    
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid request data', details: validation.error.errors },
+        { status: 400 }
+      );
+    }
+
+    const { businessId, content, platforms, mediaUrls, scheduledAt } = validation.data;
+
+    // Check RBAC permissions
+    const user = await rbacServer.getCurrentUser(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const hasPermission = await rbacServer.checkPermission(
+      user.id,
+      businessId,
+      ['ADMIN', 'MANAGER', 'INFLUENCER']
+    );
+
+    if (!hasPermission) {
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+    }
+
+    // Check if feature flag is enabled
+    const useRealProviders = process.env.FEATURE_REAL_PROVIDERS === 'true';
+
+    // Create the social post
+    const socialPost = await db.socialPost.create({
+      data: {
+        businessId,
+        content,
+        platforms: platforms.map(p => {
+          switch (p) {
+            case 'facebook': return 'FACEBOOK_PAGE';
+            case 'instagram': return 'INSTAGRAM_BUSINESS';
+            case 'google': return 'GOOGLE_BUSINESS';
+            default: return p.toUpperCase() as SocialProvider;
+          }
+        }),
+        mediaUrls: mediaUrls || [],
+        scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+        status: scheduledAt ? 'SCHEDULED' : 'DRAFT',
+      },
+    });
+
+    // If not scheduled, enqueue for immediate publishing
+    if (!scheduledAt && useRealProviders) {
+      await addSocialPublishJob({
+        postId: socialPost.id,
+        platforms,
+        content,
+        mediaUrls,
+      });
+    }
+
+    // Log audit trail
+    await logAction(
+      user.id,
+      'user',
+      'SOCIAL_POST_CREATED',
+      'SocialPost',
+      socialPost.id,
+      businessId,
+      { platforms, scheduledAt, useRealProviders }
+    );
+
+    return NextResponse.json({
+      success: true,
+      post: {
+        id: socialPost.id,
+        content: socialPost.content,
+        platforms: socialPost.platforms,
+        status: socialPost.status,
+        scheduledAt: socialPost.scheduledAt,
+        createdAt: socialPost.createdAt,
+      },
+    });
+
+  } catch (error) {
+    console.error('Social post creation error:', error);
+    return NextResponse.json(
+      { error: 'Failed to create social post' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
-    const user = await requireAuth(request);
-    requirePermission(user, "social:read");
-    
     const { searchParams } = new URL(request.url);
-    const filters = socialPostFiltersSchema.parse({
-      businessId: searchParams.get("businessId") || user.businessId,
-      status: searchParams.get("status") || undefined,
-      platform: searchParams.get("platform") || undefined,
-      page: parseInt(searchParams.get("page") || "1"),
-      limit: parseInt(searchParams.get("limit") || "20"),
+    const businessId = searchParams.get('businessId');
+    const status = searchParams.get('status');
+    const limit = searchParams.get('limit');
+    const offset = searchParams.get('offset');
+
+    const validation = getPostsSchema.safeParse({
+      businessId,
+      status,
+      limit,
+      offset,
     });
-    
-    const where: any = {
-      businessId: filters.businessId,
-    };
-    
-    if (filters.status) where.status = filters.status;
-    if (filters.platform) {
-      where.results = {
-        path: "$[*].platform",
-        equals: filters.platform,
-      };
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters', details: validation.error.errors },
+        { status: 400 }
+      );
     }
-    
+
+    const { businessId: validBusinessId, status: validStatus, limit: validLimit, offset: validOffset } = validation.data;
+
+    // Check RBAC permissions
+    const user = await rbacServer.getCurrentUser(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const hasPermission = await rbacServer.checkPermission(
+      user.id,
+      validBusinessId,
+      ['ADMIN', 'MANAGER', 'INFLUENCER', 'STAFF']
+    );
+
+    if (!hasPermission) {
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+    }
+
+    // Build where clause
+    const where: any = { businessId: validBusinessId };
+    if (validStatus) {
+      where.status = validStatus;
+    }
+
+    // Get posts with pagination
     const [posts, total] = await Promise.all([
       db.socialPost.findMany({
         where,
-        orderBy: { createdAt: "desc" },
-        skip: (filters.page - 1) * filters.limit,
-        take: filters.limit,
-        include: {
-          business: {
-            select: { name: true },
-          },
+        orderBy: { createdAt: 'desc' },
+        take: validLimit,
+        skip: validOffset,
+        select: {
+          id: true,
+          content: true,
+          platforms: true,
+          status: true,
+          scheduledAt: true,
+          publishedAt: true,
+          externalIds: true,
+          errorMessage: true,
+          createdAt: true,
+          updatedAt: true,
         },
       }),
       db.socialPost.count({ where }),
     ]);
-    
-    return ok({
+
+    return NextResponse.json({
+      success: true,
       posts,
       pagination: {
-        page: filters.page,
-        limit: filters.limit,
         total,
-        pages: Math.ceil(total / filters.limit),
+        limit: validLimit,
+        offset: validOffset,
+        hasMore: validOffset + validLimit < total,
       },
     });
-    
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return badReq("Invalid filters", error.errors);
-    }
-    return serverErr("Failed to fetch social posts", error);
-  }
-}
 
-// POST /api/social/posts - Create social post
-export async function POST(request: NextRequest) {
-  try {
-    const user = await requireAuth(request);
-    requirePermission(user, "social:post");
-    
-    const body = await request.json();
-    const data = createSocialPostSchema.parse(body);
-    
-    // Verify user has access to business
-    if (user.businessId !== data.businessId) {
-      return NextResponse.json(
-        { error: "Access denied" },
-        { status: 403 }
-      );
-    }
-    
-    // Check if real providers are enabled
-    const useRealProviders = env.FEATURE_REAL_PROVIDERS;
-    
-    // Verify connected accounts for target platforms
-    const connectedAccounts = await db.socialAccount.findMany({
-      where: {
-        businessId: data.businessId,
-        provider: {
-          in: data.targets.map(target => {
-            switch (target) {
-              case "facebook": return "FACEBOOK_PAGE";
-              case "instagram": return "INSTAGRAM_BUSINESS";
-              case "google": return "GOOGLE_BUSINESS";
-              default: return target.toUpperCase();
-            }
-          }),
-        },
-        isActive: true,
-      },
-    });
-    
-    if (connectedAccounts.length === 0) {
-      return badReq("No connected social accounts found for the specified platforms");
-    }
-    
-    // Create social post
-    const post = await db.socialPost.create({
-      data: {
-        id: nanoid(),
-        businessId: data.businessId,
-        title: data.title,
-        caption: data.caption,
-        media: data.media || [],
-        platforms: data.targets,
-        status: data.scheduleAt ? "SCHEDULED" : "DRAFT",
-        scheduledAt: data.scheduleAt ? new Date(data.scheduleAt) : null,
-        results: [],
-        metadata: {
-          useRealProviders,
-          connectedAccounts: connectedAccounts.map(acc => ({
-            id: acc.id,
-            provider: acc.provider,
-            accountName: acc.accountName,
-          })),
-        },
-      },
-    });
-    
-    // Queue for publishing
-    const publishJob = await addSocialPublishJob({
-      postId: post.id,
-      platforms: data.targets,
-      content: data.caption,
-      mediaUrls: data.media?.map(m => m.url),
-      scheduledAt: data.scheduleAt,
-    }, {
-      delay: data.scheduleAt ? new Date(data.scheduleAt).getTime() - Date.now() : 0,
-    });
-    
-    // Update post with job ID
-    await db.socialPost.update({
-      where: { id: post.id },
-      data: {
-        metadata: {
-          ...post.metadata,
-          jobId: publishJob.id,
-        },
-      },
-    });
-    
-    // Log audit action
-    await logAction(
-      user.id,
-      "user",
-      AUDIT_ACTIONS.SOCIAL_POST_CREATED,
-      "social_post",
-      post.id,
-      data.businessId,
-      { 
-        platforms: data.targets,
-        scheduled: !!data.scheduleAt,
-        useRealProviders,
-      }
-    );
-    
-    return NextResponse.json(post, { status: 201 });
-    
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return badReq("Invalid post data", error.errors);
-    }
-    return serverErr("Failed to create social post", error);
+    console.error('Social posts fetch error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch social posts' },
+      { status: 500 }
+    );
   }
 }

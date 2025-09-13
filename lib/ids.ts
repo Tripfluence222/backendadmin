@@ -1,29 +1,18 @@
-import { nanoid } from "nanoid";
+import { customAlphabet } from 'nanoid';
 
-// Generate unique IDs
-export const generateId = (): string => {
-  return nanoid();
-};
+// Create custom alphabets for different ID types
+const orderAlphabet = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8);
+const paymentAlphabet = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 10);
+const couponAlphabet = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8);
 
-// Generate short IDs for public use
-export const generateShortId = (): string => {
-  return nanoid(8);
-};
+export function createOrderId(): string {
+  return `ORD-${orderAlphabet()}`;
+}
 
-// Generate long IDs for internal use
-export const generateLongId = (): string => {
-  return nanoid(21);
-};
+export function createPaymentId(): string {
+  return `PAY-${paymentAlphabet()}`;
+}
 
-// Generate IDs with custom length
-export const generateCustomId = (length: number): string => {
-  return nanoid(length);
-};
-
-// Generate IDs with custom alphabet
-export const generateCustomAlphabetId = (alphabet: string, length: number): string => {
-  return nanoid(length, alphabet);
-};
-
-// Re-export nanoid for direct use
-export { nanoid };
+export function createCouponCode(): string {
+  return couponAlphabet();
+}

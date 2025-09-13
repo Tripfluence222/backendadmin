@@ -2,7 +2,13 @@ import { Worker, Job } from "bullmq";
 import { connection } from "./queue";
 import { logger } from "@/lib/logger";
 import { db } from "@/lib/db";
-import { SocialPublishJob, EventSyncJob, WebhookJob, EmailJob, SMSJob } from "./queue";
+import { SocialPublishJob, EventSyncJob, WebhookJob, EmailJob, SMSJob, SpaceHoldExpireJob } from "./queue";
+import { logAction } from "@/lib/audit";
+import { FacebookProvider } from "@/lib/providers/facebook";
+import { GoogleBusinessProvider } from "@/lib/providers/google-business";
+import { EventbriteProvider } from "@/lib/providers/eventbrite";
+import { MeetupProvider } from "@/lib/providers/meetup";
+import { refreshProviderToken } from "@/lib/oauth/refresh";
 
 // Social Media Worker
 const socialWorker = new Worker(
@@ -13,6 +19,16 @@ const socialWorker = new Worker(
     logger.info(`Processing social post ${postId} for platforms: ${platforms.join(", ")}`);
     
     try {
+      // Get the post first
+      const post = await db.socialPost.findUnique({
+        where: { id: postId },
+        include: { business: true },
+      });
+
+      if (!post) {
+        throw new Error(`Social post ${postId} not found`);
+      }
+
       // Update post status to publishing
       await db.socialPost.update({
         where: { id: postId },
@@ -35,7 +51,6 @@ const socialWorker = new Worker(
               }
             }),
           },
-          isActive: true,
         },
       });
 
@@ -59,13 +74,13 @@ const socialWorker = new Worker(
           
           switch (platform) {
             case "facebook":
-              result = await publishToFacebook(content, mediaUrls, account.id);
+              result = await publishToFacebook(content, mediaUrls, account);
               break;
             case "instagram":
-              result = await publishToInstagram(content, mediaUrls, account.id);
+              result = await publishToInstagram(content, mediaUrls, account);
               break;
             case "google":
-              result = await publishToGoogleBusiness(content, mediaUrls, account.id);
+              result = await publishToGoogleBusiness(content, mediaUrls, account);
               break;
             default:
               throw new Error(`Unsupported platform: ${platform}`);
@@ -96,6 +111,17 @@ const socialWorker = new Worker(
           errorMessage: allSuccessful ? null : results.find(r => !r.success)?.error,
         },
       });
+
+      // Log audit trail
+      await logAction(
+        'system',
+        'system',
+        allSuccessful ? 'SOCIAL_POST_PUBLISHED' : 'SOCIAL_POST_FAILED',
+        'SocialPost',
+        postId,
+        post.businessId,
+        { platforms, results }
+      );
       
       logger.info(`Social post ${postId} processed successfully`);
       
@@ -157,7 +183,6 @@ const eventSyncWorker = new Worker(
             provider: {
               in: ["FACEBOOK_PAGE", "EVENTBRITE", "MEETUP"],
             },
-            isActive: true,
           },
         });
 
@@ -167,13 +192,13 @@ const eventSyncWorker = new Worker(
             
             switch (account.provider) {
               case "FACEBOOK_PAGE":
-                platformResult = await createFacebookEvent(eventSync.listing, account.id);
+                platformResult = await createFacebookEvent(eventSync.listing, account);
                 break;
               case "EVENTBRITE":
-                platformResult = await createEventbriteEvent(eventSync.listing, account.id);
+                platformResult = await createEventbriteEvent(eventSync.listing, account);
                 break;
               case "MEETUP":
-                platformResult = await createMeetupEvent(eventSync.listing, account.id);
+                platformResult = await createMeetupEvent(eventSync.listing, account);
                 break;
             }
             
@@ -200,6 +225,17 @@ const eventSyncWorker = new Worker(
           syncData: result.data,
         },
       });
+
+      // Log audit trail
+      await logAction(
+        'system',
+        'system',
+        'EVENT_SYNC_COMPLETED',
+        'EventSync',
+        eventSyncId,
+        eventSync.businessId,
+        { direction, externalIds: result.externalIds }
+      );
       
       logger.info(`Event sync ${eventSyncId} completed successfully`);
       
@@ -335,103 +371,72 @@ const smsWorker = new Worker(
 );
 
 // Platform-specific publishing functions with real integrations
-async function publishToFacebook(content: string, mediaUrls?: string[], accountId?: string) {
-  const { FacebookProvider } = await import("@/lib/providers/facebook");
-  const { TokenRefreshService } = await import("@/lib/oauth/refresh");
-  
-  if (!accountId) {
-    throw new Error("Facebook account ID is required");
-  }
-
-  const token = await TokenRefreshService.getValidToken(accountId);
-  if (!token) {
-    throw new Error("Invalid or expired Facebook token");
-  }
-
-  // Get page access token from metadata or fetch it
-  const account = await db.socialAccount.findUnique({
-    where: { id: accountId },
-  });
-
+async function publishToFacebook(content: string, mediaUrls?: string[], account?: any) {
   if (!account) {
-    throw new Error("Facebook account not found");
+    throw new Error("Facebook account is required");
   }
 
-  const pageAccessToken = account.metadata?.pageToken || token;
-  const pageId = account.accountId;
+  // Check if token needs refresh
+  if (account.expiresAt && account.expiresAt < new Date()) {
+    const refreshResult = await refreshProviderToken(account.id);
+    if (!refreshResult.success) {
+      throw new Error(`Token refresh failed: ${refreshResult.error}`);
+    }
+  }
 
-  const result = await FacebookProvider.createPagePost(pageAccessToken, pageId, {
+  const provider = await FacebookProvider.createFromSocialAccount(account);
+  
+  const result = await provider.createPost({
     message: content,
-    imageUrl: mediaUrls?.[0],
+    link: mediaUrls?.[0],
   });
 
-  return { id: result.id, url: result.url };
+  return { id: result.id, url: result.permalink_url };
 }
 
-async function publishToInstagram(content: string, mediaUrls?: string[], accountId?: string) {
-  const { FacebookProvider } = await import("@/lib/providers/facebook");
-  const { TokenRefreshService } = await import("@/lib/oauth/refresh");
-  
-  if (!accountId) {
-    throw new Error("Instagram account ID is required");
-  }
-
-  const token = await TokenRefreshService.getValidToken(accountId);
-  if (!token) {
-    throw new Error("Invalid or expired Instagram token");
-  }
-
-  const account = await db.socialAccount.findUnique({
-    where: { id: accountId },
-  });
-
+async function publishToInstagram(content: string, mediaUrls?: string[], account?: any) {
   if (!account) {
-    throw new Error("Instagram account not found");
+    throw new Error("Instagram account is required");
   }
-
-  const igUserId = account.accountId;
-  const pageAccessToken = account.metadata?.pageToken || token;
 
   if (!mediaUrls || mediaUrls.length === 0) {
     throw new Error("Instagram requires at least one image or video");
   }
 
-  // Create media
-  const mediaResult = await FacebookProvider.igCreateMedia(igUserId, pageAccessToken, {
-    image_url: mediaUrls[0],
+  // Check if token needs refresh
+  if (account.expiresAt && account.expiresAt < new Date()) {
+    const refreshResult = await refreshProviderToken(account.id);
+    if (!refreshResult.success) {
+      throw new Error(`Token refresh failed: ${refreshResult.error}`);
+    }
+  }
+
+  const provider = await FacebookProvider.createFromSocialAccount(account);
+  
+  const result = await provider.createInstagramMedia({
+    imageUrl: mediaUrls[0],
     caption: content,
   });
 
-  // Publish media
-  const publishResult = await FacebookProvider.igPublishMedia(igUserId, pageAccessToken, mediaResult.id);
-
-  return { id: publishResult.id, url: publishResult.url };
+  return { id: result.id, url: result.permalink };
 }
 
-async function publishToGoogleBusiness(content: string, mediaUrls?: string[], accountId?: string) {
-  const { GoogleBusinessProvider } = await import("@/lib/providers/google-business");
-  const { TokenRefreshService } = await import("@/lib/oauth/refresh");
-  
-  if (!accountId) {
-    throw new Error("Google Business account ID is required");
-  }
-
-  const token = await TokenRefreshService.getValidToken(accountId);
-  if (!token) {
-    throw new Error("Invalid or expired Google Business token");
-  }
-
-  const account = await db.socialAccount.findUnique({
-    where: { id: accountId },
-  });
-
+async function publishToGoogleBusiness(content: string, mediaUrls?: string[], account?: any) {
   if (!account) {
-    throw new Error("Google Business account not found");
+    throw new Error("Google Business account is required");
   }
 
-  const locationName = account.accountId;
+  // Check if token needs refresh
+  if (account.expiresAt && account.expiresAt < new Date()) {
+    const refreshResult = await refreshProviderToken(account.id);
+    if (!refreshResult.success) {
+      throw new Error(`Token refresh failed: ${refreshResult.error}`);
+    }
+  }
 
-  const result = await GoogleBusinessProvider.createPost(locationName, token, {
+  const provider = await GoogleBusinessProvider.createFromSocialAccount(account);
+  
+  const result = await provider.createPost({
     summary: content,
     media: mediaUrls?.map(url => ({
       mediaFormat: "PHOTO" as const,
@@ -439,129 +444,89 @@ async function publishToGoogleBusiness(content: string, mediaUrls?: string[], ac
     })),
   });
 
-  return { id: result.name, url: result.url };
+  return { id: result.name, url: result.name };
 }
 
-async function createEventbriteEvent(listing: any, accountId: string) {
-  const { EventbriteProvider } = await import("@/lib/providers/eventbrite");
-  const { TokenRefreshService } = await import("@/lib/oauth/refresh");
-  
-  const token = await TokenRefreshService.getValidToken(accountId);
-  if (!token) {
-    throw new Error("Invalid or expired Eventbrite token");
-  }
-
-  const account = await db.socialAccount.findUnique({
-    where: { id: accountId },
-  });
-
+async function createEventbriteEvent(listing: any, account?: any) {
   if (!account) {
-    throw new Error("Eventbrite account not found");
+    throw new Error("Eventbrite account is required");
   }
 
-  const organizerId = account.accountId;
+  // Check if token needs refresh
+  if (account.expiresAt && account.expiresAt < new Date()) {
+    const refreshResult = await refreshProviderToken(account.id);
+    if (!refreshResult.success) {
+      throw new Error(`Token refresh failed: ${refreshResult.error}`);
+    }
+  }
 
-  const event = {
-    name: {
-      text: listing.title,
-    },
-    start: {
-      timezone: "UTC",
-      utc: new Date(listing.startDate).toISOString(),
-    },
-    end: listing.endDate ? {
-      timezone: "UTC", 
-      utc: new Date(listing.endDate).toISOString(),
-    } : undefined,
-    currency: "USD",
-    summary: listing.description,
-    description: {
-      text: listing.description,
-    },
-    listed: true,
-    shareable: true,
-  };
-
-  const result = await EventbriteProvider.createEvent(token, organizerId, event);
+  const provider = await EventbriteProvider.createFromSocialAccount(account);
   
-  // Publish the event
-  const publishedResult = await EventbriteProvider.publishEvent(token, result.id);
-
-  return { externalIds: [result.id], data: { eventUrl: publishedResult.url } };
-}
-
-async function createMeetupEvent(listing: any, accountId: string, groupUrlName?: string) {
-  const { MeetupProvider } = await import("@/lib/providers/meetup");
-  const { TokenRefreshService } = await import("@/lib/oauth/refresh");
-  
-  const token = await TokenRefreshService.getValidToken(accountId);
-  if (!token) {
-    throw new Error("Invalid or expired Meetup token");
-  }
-
-  const account = await db.socialAccount.findUnique({
-    where: { id: accountId },
-  });
-
-  if (!account) {
-    throw new Error("Meetup account not found");
-  }
-
-  if (!groupUrlName) {
-    groupUrlName = account.metadata?.groupUrlName;
-  }
-
-  if (!groupUrlName) {
-    throw new Error("Meetup group URL name is required");
-  }
-
-  const event = MeetupProvider.formatEventForMeetup(listing);
-  const result = await MeetupProvider.createEvent(token, groupUrlName, event);
-
-  return { externalIds: [result.id], data: { eventUrl: result.url } };
-}
-
-async function createFacebookEvent(listing: any, accountId: string) {
-  const { FacebookProvider } = await import("@/lib/providers/facebook");
-  const { TokenRefreshService } = await import("@/lib/oauth/refresh");
-  
-  const token = await TokenRefreshService.getValidToken(accountId);
-  if (!token) {
-    throw new Error("Invalid or expired Facebook token");
-  }
-
-  const account = await db.socialAccount.findUnique({
-    where: { id: accountId },
-  });
-
-  if (!account) {
-    throw new Error("Facebook account not found");
-  }
-
-  const pageAccessToken = account.metadata?.pageToken || token;
-  const pageId = account.accountId;
-
-  const event = {
+  const result = await provider.createEvent({
     name: listing.title,
-    start_time: new Date(listing.startDate).toISOString(),
-    end_time: listing.endDate ? new Date(listing.endDate).toISOString() : undefined,
     description: listing.description,
-    place: listing.location ? {
-      name: listing.location.name || listing.location.address,
-      location: {
-        city: listing.location.city,
-        state: listing.location.state,
-        country: listing.location.country,
-        latitude: listing.location.latitude,
-        longitude: listing.location.longitude,
-      },
-    } : undefined,
-    ticket_uri: listing.ticketUrl,
-  };
-
-  const result = await FacebookProvider.createPageEvent(pageAccessToken, pageId, event);
+    startDate: new Date(listing.startDate),
+    endDate: listing.endDate ? new Date(listing.endDate) : undefined,
+    timezone: "UTC",
+    currency: "USD",
+    capacity: listing.capacity,
+    ticketPrice: listing.price ? parseFloat(listing.price.toString()) : 0,
+  });
 
   return { externalIds: [result.id], data: { eventUrl: result.url } };
+}
+
+async function createMeetupEvent(listing: any, account?: any) {
+  if (!account) {
+    throw new Error("Meetup account is required");
+  }
+
+  // Check if token needs refresh
+  if (account.expiresAt && account.expiresAt < new Date()) {
+    const refreshResult = await refreshProviderToken(account.id);
+    if (!refreshResult.success) {
+      throw new Error(`Token refresh failed: ${refreshResult.error}`);
+    }
+  }
+
+  const provider = await MeetupProvider.createFromSocialAccount(account);
+  
+  const result = await provider.createEvent({
+    name: listing.title,
+    description: listing.description,
+    startTime: new Date(listing.startDate),
+    duration: listing.duration || 7200000, // 2 hours default
+    visibility: "public",
+    howToFindUs: listing.location,
+  });
+
+  return { externalIds: [result.id], data: { eventUrl: result.link } };
+}
+
+async function createFacebookEvent(listing: any, account?: any) {
+  if (!account) {
+    throw new Error("Facebook account is required");
+  }
+
+  // Check if token needs refresh
+  if (account.expiresAt && account.expiresAt < new Date()) {
+    const refreshResult = await refreshProviderToken(account.id);
+    if (!refreshResult.success) {
+      throw new Error(`Token refresh failed: ${refreshResult.error}`);
+    }
+  }
+
+  const provider = await FacebookProvider.createFromSocialAccount(account);
+  
+  const result = await provider.createEvent({
+    name: listing.title,
+    description: listing.description,
+    startTime: new Date(listing.startDate),
+    endTime: listing.endDate ? new Date(listing.endDate) : undefined,
+    location: listing.location,
+  });
+
+  return { externalIds: [result.id], data: { eventUrl: `https://facebook.com/events/${result.id}` } };
 }
 
 async function signWebhookPayload(payload: string, secret: string) {
@@ -602,6 +567,99 @@ export const closeWorkers = async () => {
     webhookWorker.close(),
     emailWorker.close(),
     smsWorker.close(),
+  ]);
+  
+  logger.info("All workers closed");
+};
+
+// Space Hold Expiry Worker
+const spaceWorker = new Worker(
+  "space",
+  async (job: Job<SpaceHoldExpireJob>) => {
+    const { requestId } = job.data;
+    
+    logger.info(`Processing space hold expiry for request ${requestId}`);
+    
+    try {
+      // Get the space request
+      const spaceRequest = await db.spaceRequest.findUnique({
+        where: { id: requestId },
+        include: {
+          space: {
+            select: {
+              title: true,
+            },
+          },
+        },
+      });
+
+      if (!spaceRequest) {
+        logger.warn(`Space request ${requestId} not found`);
+        return;
+      }
+
+      // Check if the request is still in NEEDS_PAYMENT status
+      if (spaceRequest.status !== 'NEEDS_PAYMENT') {
+        logger.info(`Space request ${requestId} is no longer in NEEDS_PAYMENT status (${spaceRequest.status})`);
+        return;
+      }
+
+      // Check if the hold has actually expired
+      if (spaceRequest.holdExpiresAt && spaceRequest.holdExpiresAt > new Date()) {
+        logger.info(`Space request ${requestId} hold has not expired yet`);
+        return;
+      }
+
+      // Update the request status to EXPIRED
+      await db.spaceRequest.update({
+        where: { id: requestId },
+        data: { status: 'EXPIRED' },
+      });
+
+      // Log the action
+      await logAction(
+        'system',
+        'system',
+        'SPACE_REQUEST_EXPIRED',
+        'SpaceRequest',
+        requestId,
+        spaceRequest.businessId,
+        {
+          spaceId: spaceRequest.spaceId,
+          spaceTitle: spaceRequest.space.title,
+          title: spaceRequest.title,
+          holdExpiresAt: spaceRequest.holdExpiresAt?.toISOString(),
+        }
+      );
+
+      logger.info(`Space request ${requestId} expired successfully`);
+    } catch (error) {
+      logger.error(`Error processing space hold expiry for request ${requestId}:`, error);
+      throw error;
+    }
+  },
+  { connection }
+);
+
+// Export all workers
+export const workers = [
+  socialWorker,
+  eventSyncWorker,
+  webhookWorker,
+  emailWorker,
+  smsWorker,
+  spaceWorker,
+];
+
+// Graceful shutdown for all workers
+export const closeWorkers = async () => {
+  await Promise.all([
+    socialWorker.close(),
+    eventSyncWorker.close(),
+    webhookWorker.close(),
+    emailWorker.close(),
+    smsWorker.close(),
+    spaceWorker.close(),
   ]);
   
   logger.info("All workers closed");

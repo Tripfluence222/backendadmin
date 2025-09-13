@@ -27,6 +27,8 @@ const envSchema = z.object({
   // Social Media APIs
   FACEBOOK_APP_ID: z.string().optional(),
   FACEBOOK_APP_SECRET: z.string().optional(),
+  FACEBOOK_PAGE_CONFIG_ID: z.string().optional(),
+  INSTAGRAM_CONFIG_ID: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   
@@ -40,7 +42,7 @@ const envSchema = z.object({
   OAUTH_REDIRECT_BASE: z.string().url("Invalid OAuth redirect base URL").optional(),
   GRAPH_API_BASE: z.string().url("Invalid Graph API base URL").default("https://graph.facebook.com"),
   GBP_API_BASE: z.string().url("Invalid Google Business Profile API base URL").default("https://mybusiness.googleapis.com"),
-  ENCRYPTION_KEY: z.string().length(44, "Encryption key must be 32-byte base64").optional(),
+  ENCRYPTION_KEY: z.string().length(64, "Encryption key must be 64 hex characters (32 bytes)").optional(),
   
   // Feature Flags
   FEATURE_REAL_PROVIDERS: z.string().transform(val => val === "true").default("false"),
@@ -121,8 +123,10 @@ export const hasRazorpay = () => !!(env.RAZORPAY_KEY_ID && env.RAZORPAY_KEY_SECR
 
 // Social media helpers
 export const hasFacebook = () => !!(env.FACEBOOK_APP_ID && env.FACEBOOK_APP_SECRET);
-export const hasTwitter = () => !!(env.TWITTER_API_KEY && env.TWITTER_API_SECRET);
-export const hasLinkedIn = () => !!(env.LINKEDIN_CLIENT_ID && env.LINKEDIN_CLIENT_SECRET);
+export const hasGoogleBusiness = () => !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
+export const hasEventbrite = () => !!(env.EVENTBRITE_CLIENT_ID && env.EVENTBRITE_CLIENT_SECRET);
+export const hasMeetup = () => !!(env.MEETUP_CLIENT_ID && env.MEETUP_CLIENT_SECRET);
+export const hasRealProviders = () => env.FEATURE_REAL_PROVIDERS;
 
 // Email helpers
 export const hasEmail = () => !!(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASSWORD);

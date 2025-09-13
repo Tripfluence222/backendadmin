@@ -11,7 +11,7 @@ export default defineConfig({
     ['html', { outputFolder: 'playwright-report', open: 'never' }]
   ],
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
     video: 'on',
     screenshot: 'only-on-failure',
@@ -26,12 +26,29 @@ export default defineConfig({
       name: 'desktop-chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        viewport: { width: 1440, height: 900 }
+        viewport: { width: 1440, height: 900 },
+        deviceScaleFactor: 1, // Stabilize fonts for CI screenshots
       },
     },
     {
       name: 'mobile-iphone14',
       use: { ...devices['iPhone 14'] },
+    },
+    {
+      name: 'desktop-firefox',
+      use: { 
+        ...devices['Desktop Firefox'],
+        viewport: { width: 1440, height: 900 },
+        deviceScaleFactor: 1,
+      },
+    },
+    {
+      name: 'desktop-safari',
+      use: { 
+        ...devices['Desktop Safari'],
+        viewport: { width: 1440, height: 900 },
+        deviceScaleFactor: 1,
+      },
     },
   ],
   webServer: {

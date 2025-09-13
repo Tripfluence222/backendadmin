@@ -3,7 +3,7 @@ import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 
 // Redis connection
-const connection = {
+export const connection = {
   host: env.REDIS_URL ? new URL(env.REDIS_URL).hostname : "localhost",
   port: env.REDIS_URL ? parseInt(new URL(env.REDIS_URL).port) : 6379,
   password: env.REDIS_URL ? new URL(env.REDIS_URL).password : undefined,
@@ -15,6 +15,7 @@ export const eventSyncQueue = new Queue("event-sync", { connection });
 export const webhookQueue = new Queue("webhook", { connection });
 export const emailQueue = new Queue("email", { connection });
 export const smsQueue = new Queue("sms", { connection });
+export const spaceQueue = new Queue("space", { connection });
 
 // Job types
 export interface SocialPublishJob {
@@ -51,6 +52,11 @@ export interface SMSJob {
   message: string;
   template?: string;
   data?: any;
+}
+
+export interface SpaceHoldExpireJob {
+  requestId: string;
+  expiresAt: Date;
 }
 
 // Queue management functions
@@ -110,14 +116,42 @@ export const addSMSJob = async (jobData: SMSJob, options?: any) => {
   });
 };
 
+export const addSpaceHoldExpireJob = async (jobData: SpaceHoldExpireJob, options?: any) => {
+  return spaceQueue.add("hold-expire", jobData, {
+    attempts: 1, // Only try once for hold expiry
+    ...options,
+  });
+};
+
+// Generic addJob function for convenience
+export const addJob = async (queueName: string, jobData: any, options?: any) => {
+  switch (queueName) {
+    case 'socialPublish':
+      return addSocialPublishJob(jobData, options);
+    case 'eventSync':
+      return addEventSyncJob(jobData, options);
+    case 'webhook':
+      return addWebhookJob(jobData, options);
+    case 'email':
+      return addEmailJob(jobData, options);
+    case 'sms':
+      return addSMSJob(jobData, options);
+    case 'spaceHoldExpire':
+      return addSpaceHoldExpireJob(jobData, options);
+    default:
+      throw new Error(`Unknown queue: ${queueName}`);
+  }
+};
+
 // Queue monitoring
 export const getQueueStats = async () => {
-  const [socialStats, eventSyncStats, webhookStats, emailStats, smsStats] = await Promise.all([
+  const [socialStats, eventSyncStats, webhookStats, emailStats, smsStats, spaceStats] = await Promise.all([
     socialQueue.getJobCounts(),
     eventSyncQueue.getJobCounts(),
     webhookQueue.getJobCounts(),
     emailQueue.getJobCounts(),
     smsQueue.getJobCounts(),
+    spaceQueue.getJobCounts(),
   ]);
 
   return {
@@ -126,6 +160,7 @@ export const getQueueStats = async () => {
     webhook: webhookStats,
     email: emailStats,
     sms: smsStats,
+    space: spaceStats,
   };
 };
 
@@ -144,6 +179,8 @@ export const cleanupOldJobs = async () => {
     emailQueue.clean(cutoffTime, 100, "failed"),
     smsQueue.clean(cutoffTime, 100, "completed"),
     smsQueue.clean(cutoffTime, 100, "failed"),
+    spaceQueue.clean(cutoffTime, 100, "completed"),
+    spaceQueue.clean(cutoffTime, 100, "failed"),
   ]);
   
   logger.info("Cleaned up old jobs");
@@ -157,6 +194,7 @@ export const closeQueues = async () => {
     webhookQueue.close(),
     emailQueue.close(),
     smsQueue.close(),
+    spaceQueue.close(),
   ]);
   
   logger.info("All queues closed");

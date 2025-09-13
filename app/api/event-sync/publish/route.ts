@@ -1,157 +1,185 @@
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { db } from "@/lib/db";
-import { ok, badReq, serverErr } from "@/lib/http";
-import { requireAuth, requirePermission } from "@/lib/auth";
-import { logAction, AUDIT_ACTIONS } from "@/lib/audit";
-import { addEventSyncJob } from "@/jobs/queue";
-import { nanoid } from "@/lib/ids";
-import { env } from "@/lib/env";
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { db } from '@/lib/db';
+import { logAction } from '@/lib/audit';
+import { rbacServer } from '@/lib/rbac-server';
+import { addEventSyncJob } from '@/jobs/queue';
+import { SocialProvider } from '@prisma/client';
 
-const publishEventSyncSchema = z.object({
+const publishEventSchema = z.object({
   businessId: z.string().cuid(),
   listingId: z.string().cuid(),
-  targets: z.array(z.enum(["facebook", "eventbrite", "meetup"])).min(1),
-  metadata: z.object({
-    meetupGroup: z.string().optional(),
-  }).optional(),
+  platforms: z.array(z.enum(['facebook', 'eventbrite', 'meetup'])).min(1),
+  forceUpdate: z.boolean().default(false),
+  meetupGroupUrlName: z.string().optional(),
 });
 
-// POST /api/event-sync/publish - Publish event to external platforms
 export async function POST(request: NextRequest) {
   try {
-    const user = await requireAuth(request);
-    requirePermission(user, "eventsync:publish");
-    
     const body = await request.json();
-    const data = publishEventSyncSchema.parse(body);
+    const validation = publishEventSchema.safeParse(body);
     
-    // Verify user has access to business
-    if (user.businessId !== data.businessId) {
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Access denied" },
-        { status: 403 }
+        { error: 'Invalid request data', details: validation.error.errors },
+        { status: 400 }
       );
     }
-    
-    // Get listing details
+
+    const { businessId, listingId, platforms, forceUpdate, meetupGroupUrlName } = validation.data;
+
+    // Check RBAC permissions
+    const user = await rbacServer.getCurrentUser(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const hasPermission = await rbacServer.checkPermission(
+      user.id,
+      businessId,
+      ['ADMIN', 'MANAGER', 'INFLUENCER']
+    );
+
+    if (!hasPermission) {
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+    }
+
+    // Verify listing exists and belongs to business
     const listing = await db.listing.findFirst({
       where: {
-        id: data.listingId,
-        businessId: data.businessId,
+        id: listingId,
+        businessId,
       },
     });
-    
+
     if (!listing) {
       return NextResponse.json(
-        { error: "Listing not found" },
+        { error: 'Listing not found or access denied' },
         { status: 404 }
       );
     }
-    
-    // Check if real providers are enabled
-    const useRealProviders = env.FEATURE_REAL_PROVIDERS;
-    
-    // Verify connected accounts for target platforms
-    const connectedAccounts = await db.socialAccount.findMany({
+
+    // Check if feature flag is enabled
+    const useRealProviders = process.env.FEATURE_REAL_PROVIDERS === 'true';
+
+    // Check for existing event sync
+    let eventSync = await db.eventSync.findFirst({
       where: {
-        businessId: data.businessId,
-        provider: {
-          in: data.targets.map(target => {
-            switch (target) {
-              case "facebook": return "FACEBOOK_PAGE";
-              case "eventbrite": return "EVENTBRITE";
-              case "meetup": return "MEETUP";
-              default: return target.toUpperCase();
+        businessId,
+        listingId,
+      },
+    });
+
+    if (eventSync && !forceUpdate) {
+      return NextResponse.json(
+        { error: 'Event sync already exists. Use forceUpdate=true to overwrite.' },
+        { status: 409 }
+      );
+    }
+
+    // Create or update event sync
+    if (eventSync) {
+      eventSync = await db.eventSync.update({
+        where: { id: eventSync.id },
+        data: {
+          platforms: platforms.map(p => {
+            switch (p) {
+              case 'facebook': return 'FACEBOOK_PAGE';
+              case 'eventbrite': return 'EVENTBRITE';
+              case 'meetup': return 'MEETUP';
+              default: return p.toUpperCase() as SocialProvider;
             }
           }),
+          lastSyncStatus: 'PENDING',
+          lastSyncAt: null,
+          lastSyncError: null,
+          syncData: {},
+          externalIds: [],
         },
-        isActive: true,
-      },
-    });
-    
-    if (connectedAccounts.length === 0) {
-      return badReq("No connected accounts found for the specified platforms");
+      });
+    } else {
+      eventSync = await db.eventSync.create({
+        data: {
+          businessId,
+          listingId,
+          platforms: platforms.map(p => {
+            switch (p) {
+              case 'facebook': return 'FACEBOOK_PAGE';
+              case 'eventbrite': return 'EVENTBRITE';
+              case 'meetup': return 'MEETUP';
+              default: return p.toUpperCase() as SocialProvider;
+            }
+          }),
+          lastSyncStatus: 'PENDING',
+          syncData: {},
+          externalIds: [],
+        },
+      });
     }
-    
-    // Create or update event sync
-    const eventSync = await db.eventSync.upsert({
-      where: {
-        businessId_listingId: {
-          businessId: data.businessId,
-          listingId: data.listingId,
+
+    // If real providers are enabled, enqueue sync job
+    if (useRealProviders) {
+      await addEventSyncJob({
+        eventSyncId: eventSync.id,
+        direction: 'export',
+        forceUpdate,
+      });
+    } else {
+      // Mock mode - simulate successful sync
+      await db.eventSync.update({
+        where: { id: eventSync.id },
+        data: {
+          lastSyncStatus: 'SUCCESS',
+          lastSyncAt: new Date(),
+          externalIds: platforms.map(p => `mock-${p}-${Date.now()}`),
+          syncData: {
+            mock: true,
+            platforms: platforms.reduce((acc, p) => {
+              acc[p] = { eventUrl: `https://${p}.com/events/mock-${Date.now()}` };
+              return acc;
+            }, {} as any),
+          },
         },
-      },
-      update: {
-        platforms: data.targets,
-        metadata: data.metadata,
-        lastSyncStatus: "PENDING",
-        lastSyncAt: new Date(),
-        updatedAt: new Date(),
-      },
-      create: {
-        id: nanoid(),
-        businessId: data.businessId,
-        listingId: data.listingId,
-        name: `${listing.title} - Event Sync`,
-        platforms: data.targets,
-        syncDirection: "export",
-        status: "ACTIVE",
-        lastSyncStatus: "PENDING",
-        metadata: {
-          ...data.metadata,
-          useRealProviders,
-          connectedAccounts: connectedAccounts.map(acc => ({
-            id: acc.id,
-            provider: acc.provider,
-            accountName: acc.accountName,
-          })),
-        },
-      },
-    });
-    
-    // Queue for sync
-    const syncJob = await addEventSyncJob({
-      eventSyncId: eventSync.id,
-      direction: "export",
-      forceUpdate: true,
-    });
-    
-    // Update event sync with job ID
-    await db.eventSync.update({
-      where: { id: eventSync.id },
-      data: {
-        metadata: {
-          ...eventSync.metadata,
-          jobId: syncJob.id,
-        },
-      },
-    });
-    
-    // Log audit action
+      });
+    }
+
+    // Log audit trail
     await logAction(
       user.id,
-      "user",
-      AUDIT_ACTIONS.EVENT_SYNC_PUBLISHED,
-      "event_sync",
+      'user',
+      'EVENT_SYNC_INITIATED',
+      'EventSync',
       eventSync.id,
-      data.businessId,
+      businessId,
       { 
-        platforms: data.targets,
-        listingTitle: listing.title,
+        listingId, 
+        platforms, 
+        forceUpdate, 
         useRealProviders,
+        meetupGroupUrlName,
       }
     );
-    
-    return ok({
-      eventSync,
-      message: "Event sync queued successfully",
+
+    return NextResponse.json({
+      success: true,
+      eventSync: {
+        id: eventSync.id,
+        listingId: eventSync.listingId,
+        platforms: eventSync.platforms,
+        lastSyncStatus: eventSync.lastSyncStatus,
+        lastSyncAt: eventSync.lastSyncAt,
+        externalIds: eventSync.externalIds,
+        syncData: eventSync.syncData,
+        createdAt: eventSync.createdAt,
+        updatedAt: eventSync.updatedAt,
+      },
     });
-    
+
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return badReq("Invalid publish data", error.errors);
-    }
-    return serverErr("Failed to publish event sync", error);
+    console.error('Event sync publish error:', error);
+    return NextResponse.json(
+      { error: 'Failed to publish event sync' },
+      { status: 500 }
+    );
   }
 }

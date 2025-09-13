@@ -48,8 +48,15 @@ export const AUDIT_ACTIONS = {
   SOCIAL_POST_CREATED: "social.post.created",
   SOCIAL_POST_PUBLISHED: "social.post.published",
   SOCIAL_POST_FAILED: "social.post.failed",
+  SOCIAL_TEST_POST: "social.test.post",
   SOCIAL_ACCOUNT_CONNECTED: "social.account.connected",
   SOCIAL_ACCOUNT_DISCONNECTED: "social.account.disconnected",
+  
+  // Provider
+  PROVIDER_CONNECTED: "provider.connected",
+  PROVIDER_DISCONNECTED: "provider.disconnected",
+  PROVIDER_RECONNECT_REQUESTED: "provider.reconnect.requested",
+  PROVIDER_REFRESHED: "provider.refreshed",
   
   // Event Sync
   EVENT_SYNC_CREATED: "event.sync.created",
@@ -57,6 +64,10 @@ export const AUDIT_ACTIONS = {
   EVENT_SYNC_DELETED: "event.sync.deleted",
   EVENT_SYNC_PUBLISHED: "event.sync.published",
   EVENT_SYNC_IMPORTED: "event.sync.imported",
+  EVENT_PUBLISHED: "event.published",
+  EVENT_UPDATED: "event.updated",
+  EVENT_FAILED: "event.failed",
+  EVENT_TEST_PUBLISH: "event.test.publish",
   
   // Marketing
   COUPON_CREATED: "coupon.created",

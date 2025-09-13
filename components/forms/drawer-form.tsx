@@ -84,7 +84,7 @@ export function DrawerForm<T extends z.ZodType>({
           )}
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form data-testid="form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             {children(form)}
             <DialogFooter>
               <Button

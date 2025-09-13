@@ -1,0 +1,353 @@
+# Page snapshot
+
+```yaml
+- generic:
+  - button "Open Next.js Dev Tools" [ref=e6] [cursor=pointer]:
+    - img [ref=e7] [cursor=pointer]
+  - alert
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: T
+            - generic: Tripfluence
+        - navigation:
+          - link:
+            - /url: /dashboard
+            - img
+            - generic: Dashboard
+          - link:
+            - /url: /listings
+            - img
+            - generic: Listings
+          - link:
+            - /url: /spaces
+            - img
+            - generic: Spaces
+          - link:
+            - /url: /space-requests
+            - img
+            - generic: Space Requests
+          - link:
+            - /url: /space-pricing
+            - img
+            - generic: Space Pricing
+          - link:
+            - /url: /availability
+            - img
+            - generic: Availability
+          - link:
+            - /url: /orders
+            - img
+            - generic: Orders
+            - generic: "3"
+          - link:
+            - /url: /customers
+            - img
+            - generic: Customers
+          - link:
+            - /url: /reviews
+            - img
+            - generic: Reviews
+          - link:
+            - /url: /widgets
+            - img
+            - generic: Widgets
+          - link:
+            - /url: /social
+            - img
+            - generic: Social
+          - link:
+            - /url: /event-sync
+            - img
+            - generic: Event Sync
+          - link:
+            - /url: /integrations
+            - img
+            - generic: Integrations
+          - link:
+            - /url: /marketing
+            - img
+            - generic: Marketing
+          - link:
+            - /url: /reports
+            - img
+            - generic: Reports
+          - link:
+            - /url: /settings
+            - img
+            - generic: Settings
+        - generic:
+          - generic:
+            - generic:
+              - generic: AD
+            - generic:
+              - paragraph: Admin User
+              - paragraph: admin@tripfluence.com
+    - generic:
+      - banner:
+        - generic:
+          - generic:
+            - img
+            - searchbox
+        - generic:
+          - button:
+            - img
+            - generic: Toggle theme
+          - button:
+            - img
+            - generic: "5"
+            - generic: Notifications
+          - button:
+            - generic:
+              - generic: AD
+      - main:
+        - generic:
+          - generic:
+            - generic:
+              - heading [level=1]: Listings Manager
+              - paragraph: Manage your listings, events, and properties
+            - button:
+              - img
+              - text: Create Listing
+          - generic:
+            - generic:
+              - img
+              - generic: "Filters:"
+            - textbox
+            - combobox:
+              - generic: Type
+              - img
+            - combobox:
+              - generic: Status
+              - img
+            - textbox
+            - button: Clear Filters
+          - generic:
+            - generic:
+              - generic: "5"
+              - generic: Total Listings
+            - generic:
+              - generic: "0"
+              - generic: Published
+            - generic:
+              - generic: "0"
+              - generic: Drafts
+            - generic:
+              - generic: "0"
+              - generic: Archived
+          - generic:
+            - generic:
+              - textbox
+              - button:
+                - text: Columns
+                - img
+            - generic:
+              - generic:
+                - table:
+                  - rowgroup:
+                    - row:
+                      - cell:
+                        - button:
+                          - text: Title
+                          - img
+                      - cell: Type
+                      - cell: Status
+                      - cell:
+                        - button:
+                          - text: Next Date
+                          - img
+                      - cell:
+                        - button:
+                          - text: Occupancy
+                          - img
+                      - cell: Location
+                      - cell:
+                        - button:
+                          - text: Price
+                          - img
+                      - cell:
+                        - button:
+                          - text: Created
+                          - img
+                      - cell
+                  - rowgroup:
+                    - row:
+                      - cell:
+                        - generic:
+                          - generic: Sunset Yoga Retreat
+                          - generic: /sunset-yoga-retreat
+                      - cell:
+                        - generic: RETREAT
+                      - cell:
+                        - generic: PUBLISHED
+                      - cell:
+                        - generic: Feb 15, 2024
+                      - cell:
+                        - generic:
+                          - generic: 12/20
+                          - generic: 60% full
+                      - cell:
+                        - generic: Bali, Indonesia
+                      - cell:
+                        - generic: $299
+                      - cell:
+                        - generic: Jan 15, 2024
+                      - cell:
+                        - button:
+                          - generic: Open menu
+                          - img
+                    - row:
+                      - cell:
+                        - generic:
+                          - generic: Farm-to-Table Cooking Class
+                          - generic: /farm-to-table-cooking
+                      - cell:
+                        - generic: ACTIVITY
+                      - cell:
+                        - generic: PUBLISHED
+                      - cell:
+                        - generic: Feb 20, 2024
+                      - cell:
+                        - generic:
+                          - generic: 8/12
+                          - generic: 67% full
+                      - cell:
+                        - generic: Napa Valley, CA
+                      - cell:
+                        - generic: $150
+                      - cell:
+                        - generic: Jan 10, 2024
+                      - cell:
+                        - button:
+                          - generic: Open menu
+                          - img
+                    - row:
+                      - cell:
+                        - generic:
+                          - generic: Luxury Beach Villa
+                          - generic: /luxury-beach-villa
+                      - cell:
+                        - generic: PROPERTY
+                      - cell:
+                        - generic: PUBLISHED
+                      - cell:
+                        - generic: Feb 25, 2024
+                      - cell:
+                        - generic:
+                          - generic: 6/8
+                          - generic: 75% full
+                      - cell:
+                        - generic: Malibu, CA
+                      - cell:
+                        - generic: $800
+                      - cell:
+                        - generic: Jan 05, 2024
+                      - cell:
+                        - button:
+                          - generic: Open menu
+                          - img
+                    - row:
+                      - cell:
+                        - generic:
+                          - generic: Wine Tasting Experience
+                          - generic: /wine-tasting-experience
+                      - cell:
+                        - generic: EVENT
+                      - cell:
+                        - generic: DRAFT
+                      - cell:
+                        - generic: Mar 01, 2024
+                      - cell:
+                        - generic:
+                          - generic: 0/15
+                          - generic: 0% full
+                      - cell:
+                        - generic: Sonoma, CA
+                      - cell:
+                        - generic: $75
+                      - cell:
+                        - generic: Jan 25, 2024
+                      - cell:
+                        - button:
+                          - generic: Open menu
+                          - img
+                    - row:
+                      - cell:
+                        - generic:
+                          - generic: Fine Dining Restaurant
+                          - generic: /fine-dining-restaurant
+                      - cell:
+                        - generic: RESTAURANT
+                      - cell:
+                        - generic: PUBLISHED
+                      - cell:
+                        - generic: Feb 18, 2024
+                      - cell:
+                        - generic:
+                          - generic: 45/60
+                          - generic: 75% full
+                      - cell:
+                        - generic: San Francisco, CA
+                      - cell:
+                        - generic: $120
+                      - cell:
+                        - generic: Jan 12, 2024
+                      - cell:
+                        - button:
+                          - generic: Open menu
+                          - img
+            - generic:
+              - generic: 0 of 5 row(s) selected.
+              - generic:
+                - button [disabled]: Previous
+                - button [disabled]: Next
+  - region "Notifications alt+T"
+  - dialog "Create New Listing" [ref=e11]:
+    - generic [ref=e12]:
+      - heading "Create New Listing" [level=2] [ref=e13]
+      - paragraph [ref=e14]: Add a new listing to your platform
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - generic [ref=e19]: Title
+            - textbox "Listing title" [active] [ref=e20]
+          - generic [ref=e21]:
+            - generic [ref=e22]: Type
+            - combobox [ref=e23]:
+              - generic: Select type
+              - img
+            - combobox [ref=e24]
+        - generic [ref=e25]:
+          - generic [ref=e26]: Description
+          - textbox "Describe your listing..." [ref=e27]
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic [ref=e30]: Category
+            - textbox "e.g., Wellness, Culinary" [ref=e31]
+          - generic [ref=e32]:
+            - generic [ref=e33]: Location
+            - textbox "City, State/Country" [ref=e34]
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - generic [ref=e37]: Slug
+            - textbox "url-friendly-slug" [ref=e38]
+          - generic [ref=e39]:
+            - generic [ref=e40]: Status
+            - combobox [ref=e41]:
+              - generic: Select status
+              - img
+            - combobox [ref=e42]
+        - generic [ref=e43]:
+          - generic [ref=e44]: Meta Description
+          - textbox "SEO description (optional)" [ref=e45]
+      - generic [ref=e46]:
+        - button "Cancel" [ref=e47]
+        - button "Save" [ref=e48]
+    - button "Close" [ref=e49]:
+      - img
+      - generic [ref=e50]: Close
+```

@@ -19,6 +19,10 @@ import {
   Settings,
   Menu,
   X,
+  Plug,
+  Building2,
+  MessageSquare,
+  DollarSign,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -27,6 +31,9 @@ import { useState } from "react";
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Listings", href: "/listings", icon: List },
+  { name: "Spaces", href: "/spaces", icon: Building2 },
+  { name: "Space Requests", href: "/space-requests", icon: MessageSquare },
+  { name: "Space Pricing", href: "/space-pricing", icon: DollarSign },
   { name: "Availability", href: "/availability", icon: Calendar },
   { name: "Orders", href: "/orders", icon: ShoppingCart },
   { name: "Customers", href: "/customers", icon: Users },
@@ -34,6 +41,7 @@ const navigation = [
   { name: "Widgets", href: "/widgets", icon: Puzzle },
   { name: "Social", href: "/social", icon: Share2 },
   { name: "Event Sync", href: "/event-sync", icon: CalendarIcon },
+  { name: "Integrations", href: "/integrations", icon: Plug },
   { name: "Marketing", href: "/marketing", icon: Megaphone },
   { name: "Reports", href: "/reports", icon: BarChart3 },
   { name: "Settings", href: "/settings", icon: Settings },
