@@ -8,7 +8,7 @@ import { getCurrentUser } from '@/lib/auth';
 // GET /api/space/[id]/availability - Get availability blocks
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -22,13 +22,14 @@ export async function GET(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const { id } = await params;
     const { searchParams } = new URL(request.url);
     const from = searchParams.get('from');
     const to = searchParams.get('to');
 
     const space = await db.space.findFirst({
       where: {
-        id: params.id,
+        id,
         businessId: user.businessId,
       },
     });
@@ -38,7 +39,7 @@ export async function GET(
     }
 
     const where: any = {
-      spaceId: params.id,
+      spaceId: id,
     };
 
     if (from && to) {
@@ -82,7 +83,7 @@ export async function GET(
 // POST /api/space/[id]/availability - Create availability blocks
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -96,13 +97,14 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const { id } = await params;
     const body = await request.json();
-    const data = SpaceAvailabilityBulkSchema.parse({ ...body, spaceId: params.id });
+    const data = SpaceAvailabilityBulkSchema.parse({ ...body, spaceId: id });
 
     // Check if space exists and belongs to user's business
     const existingSpace = await db.space.findFirst({
       where: {
-        id: params.id,
+        id: id,
         businessId: user.businessId,
       },
     });
@@ -115,7 +117,7 @@ export async function POST(
     for (const block of data.blocks) {
       const overlapping = await db.spaceAvailability.findFirst({
         where: {
-          spaceId: params.id,
+          spaceId: id,
           OR: [
             {
               AND: [
@@ -153,7 +155,7 @@ export async function POST(
     // Create availability blocks
     const availability = await db.spaceAvailability.createMany({
       data: data.blocks.map(block => ({
-        spaceId: params.id,
+        spaceId: id,
         start: block.start,
         end: block.end,
         isBlocked: block.isBlocked,
@@ -167,7 +169,7 @@ export async function POST(
       'user',
       'SPACE_AVAILABILITY_ADDED',
       'Space',
-      params.id,
+      id,
       user.businessId,
       {
         title: existingSpace.title,

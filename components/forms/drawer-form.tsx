@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -83,24 +83,28 @@ export function DrawerForm<T extends z.ZodType>({
             <DialogDescription>{description}</DialogDescription>
           )}
         </DialogHeader>
-        <Form {...form}>
-          <form data-testid="form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <FormProvider {...form}>
+          <div data-testid="form" className="space-y-4">
             {children(form)}
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                disabled={isLoading}
-              >
-                {cancelLabel}
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Saving..." : submitLabel}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isLoading}
+            >
+              {cancelLabel}
+            </Button>
+            <Button 
+              type="button" 
+              disabled={isLoading}
+              onClick={() => form.handleSubmit(handleSubmit)()}
+            >
+              {isLoading ? "Saving..." : submitLabel}
+            </Button>
+          </DialogFooter>
+          </div>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );

@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     
     // Check Redis connection (if configured)
     let redisStatus = "not_configured";
-    let redisLatency = 0;
+    const redisLatency = 0;
     
     if (env.REDIS_URL) {
       try {

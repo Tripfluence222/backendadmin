@@ -6,7 +6,7 @@ import { Map } from '@/components/public/Map';
 import { VenueSkeleton } from '@/components/public/Skeletons';
 
 interface VenuesPageProps {
-  searchParams: {
+  searchParams: Promise<{
     city?: string;
     priceMin?: string;
     priceMax?: string;
@@ -18,10 +18,14 @@ interface VenuesPageProps {
     sort?: string;
     lat?: string;
     lng?: string;
-  };
+  }>;
 }
 
-export default function VenuesPage({ searchParams }: VenuesPageProps) {
+// Force dynamic rendering to avoid SSR issues with client components
+export const dynamic = 'force-dynamic';
+
+export default async function VenuesPage({ searchParams }: VenuesPageProps) {
+  const params = await searchParams;
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -33,14 +37,14 @@ export default function VenuesPage({ searchParams }: VenuesPageProps) {
 
       {/* Search Bar */}
       <div className="mb-6">
-        <SearchBar initialValues={searchParams} />
+        <SearchBar initialValues={params} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Filters Sidebar */}
         <div className="lg:col-span-1">
           <div className="sticky top-4">
-            <Filters searchParams={searchParams} />
+            <Filters searchParams={params} />
           </div>
         </div>
 
@@ -50,7 +54,7 @@ export default function VenuesPage({ searchParams }: VenuesPageProps) {
             {/* Venue Grid */}
             <div>
               <Suspense fallback={<VenueSkeleton />}>
-                <VenueGrid searchParams={searchParams} />
+                <VenueGrid searchParams={params} />
               </Suspense>
             </div>
 
@@ -58,7 +62,7 @@ export default function VenuesPage({ searchParams }: VenuesPageProps) {
             <div className="hidden xl:block">
               <div className="sticky top-4">
                 <Suspense fallback={<div className="h-96 bg-muted rounded-lg animate-pulse" />}>
-                  <Map searchParams={searchParams} />
+                  <Map searchParams={params} />
                 </Suspense>
               </div>
             </div>

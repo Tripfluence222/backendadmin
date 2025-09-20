@@ -31,15 +31,16 @@ const PROVIDER_AUTH_URLS = {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { provider: string } }
+  { params }: { params: Promise<{ provider: string }> }
 ) {
+  const { provider } = await params;
   try {
     const { searchParams } = new URL(request.url);
     const businessId = searchParams.get('businessId');
-    const provider = params.provider as SocialProvider;
+    const providerEnum = provider as SocialProvider;
 
     // Validate input
-    const validation = connectSchema.safeParse({ businessId, provider });
+    const validation = connectSchema.safeParse({ businessId, provider: providerEnum });
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid parameters', details: validation.error.errors },

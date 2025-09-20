@@ -41,7 +41,7 @@ const envSchema = z.object({
   // OAuth Configuration
   OAUTH_REDIRECT_BASE: z.string().url("Invalid OAuth redirect base URL").optional(),
   GRAPH_API_BASE: z.string().url("Invalid Graph API base URL").default("https://graph.facebook.com"),
-  GBP_API_BASE: z.string().url("Invalid Google Business Profile API base URL").default("https://mybusiness.googleapis.com"),
+  GOOGLE_BUSINESS_API_BASE: z.string().url("Invalid Google Business Profile API base URL").default("https://mybusiness.googleapis.com"),
   ENCRYPTION_KEY: z.string().length(64, "Encryption key must be 64 hex characters (32 bytes)").optional(),
   
   // Feature Flags

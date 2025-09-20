@@ -12,7 +12,7 @@ import { queryKeys } from "@/lib/api/keys";
 import { env } from "@/lib/env";
 import { ProviderCard } from "./components/ProviderCard";
 import { LogsTable } from "./components/LogsTable";
-import { getMockUser } from "@/lib/auth";
+import { getMockUser } from "@/lib/auth-client";
 
 export default function IntegrationsPage() {
   const [activeTab, setActiveTab] = useState("connections");

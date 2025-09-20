@@ -43,3 +43,31 @@ export async function getCurrentUser(): Promise<User | null> {
     return null;
   }
 }
+
+// Mock user for development/testing
+export function getMockUser(): User {
+  return {
+    id: "mock-user-id",
+    email: "admin@tripfluence.com",
+    firstName: "Admin",
+    lastName: "User",
+    businessId: "mock-business-id",
+    isActive: true,
+    lastLoginAt: new Date(),
+  };
+}
+
+// Auth middleware functions for API routes
+export async function requireAuth(): Promise<User> {
+  const user = await getCurrentUser();
+  if (!user) {
+    throw new Error('Authentication required');
+  }
+  return user;
+}
+
+export async function requirePermission(permission: string): Promise<User> {
+  const user = await requireAuth();
+  // For now, just return the user - in a real app you'd check permissions
+  return user;
+}

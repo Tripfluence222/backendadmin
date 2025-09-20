@@ -9,8 +9,11 @@ export interface Order {
   listingId: string;
   listingTitle: string;
   listingType: string;
+  listingLocation?: string;
   date: string;
   time?: string;
+  checkIn?: string;
+  checkOut?: string;
   guests: number;
   totalAmount: number;
   paymentStatus: PaymentStatus;
@@ -36,8 +39,11 @@ const mockOrders: Order[] = [
     listingId: "1",
     listingTitle: "Sunset Yoga Retreat",
     listingType: "retreat",
+    listingLocation: "Malibu, CA",
     date: "2024-02-15",
     time: "18:00",
+    checkIn: "2024-02-15T18:00:00Z",
+    checkOut: "2024-02-16T10:00:00Z",
     guests: 2,
     totalAmount: 598,
     paymentStatus: "paid",
@@ -59,6 +65,7 @@ const mockOrders: Order[] = [
     listingId: "2",
     listingTitle: "Farm-to-Table Cooking Class",
     listingType: "activity",
+    listingLocation: "Napa Valley, CA",
     date: "2024-02-20",
     time: "14:00",
     guests: 1,

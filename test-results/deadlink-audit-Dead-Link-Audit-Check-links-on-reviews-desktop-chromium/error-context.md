@@ -1,0 +1,622 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [active]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - navigation [ref=e7]:
+            - button "previous" [disabled] [ref=e8]:
+              - img "previous" [ref=e9]
+            - generic [ref=e11]:
+              - generic [ref=e12]: 1/
+              - generic [ref=e13]: "1"
+            - button "next" [disabled] [ref=e14]:
+              - img "next" [ref=e15]
+          - img
+        - generic [ref=e17]:
+          - link "Next.js 15.5.2 (stale) Turbopack" [ref=e18] [cursor=pointer]:
+            - /url: https://nextjs.org/docs/messages/version-staleness
+            - img [ref=e19] [cursor=pointer]
+            - generic "There is a newer version (15.5.3) available, upgrade recommended!" [ref=e21] [cursor=pointer]: Next.js 15.5.2 (stale)
+            - generic [ref=e22] [cursor=pointer]: Turbopack
+          - img
+      - dialog "Build Error" [ref=e24]:
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - generic [ref=e29]:
+              - generic [ref=e31]: Build Error
+              - generic [ref=e32]:
+                - button "Copy Error Info" [ref=e33] [cursor=pointer]:
+                  - img [ref=e34] [cursor=pointer]
+                - link "Go to related documentation" [ref=e36] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/messages/module-not-found
+                  - img [ref=e37] [cursor=pointer]
+                - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e39] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+                  - img [ref=e40] [cursor=pointer]
+            - paragraph [ref=e49]: "Module not found: Can't resolve '@dnd-kit/core'"
+          - generic [ref=e51]:
+            - generic [ref=e53]:
+              - img [ref=e55]
+              - generic [ref=e58]: ./components/uploader/ImageUploader.tsx (5:1)
+              - button "Open in editor" [ref=e59] [cursor=pointer]:
+                - img [ref=e61] [cursor=pointer]
+            - generic [ref=e64]:
+              - generic [ref=e65]: "Module not found: Can't resolve '@dnd-kit/core'"
+              - generic [ref=e67]: 3 |
+              - generic [ref=e69]: import
+              - generic [ref=e70]: "{ useState"
+              - generic [ref=e71]: ","
+              - generic [ref=e72]: "useCallback }"
+              - generic [ref=e73]: from
+              - generic [ref=e75]: "'react'"
+              - generic [ref=e76]: ;
+              - generic [ref=e78]: 4 |
+              - generic [ref=e80]: import
+              - generic [ref=e81]: "{ useDropzone }"
+              - generic [ref=e82]: from
+              - generic [ref=e84]: "'react-dropzone'"
+              - generic [ref=e85]: ;
+              - generic [ref=e86]: ">"
+              - generic [ref=e87]: 5 |
+              - generic [ref=e89]: import
+              - generic [ref=e90]: "{"
+              - generic [ref=e91]: DndContext
+              - generic [ref=e92]: ","
+              - generic [ref=e93]: closestCenter
+              - generic [ref=e94]: ","
+              - generic [ref=e96]: KeyboardSensor
+              - generic [ref=e97]: ","
+              - generic [ref=e99]: PointerSensor
+              - generic [ref=e100]: ","
+              - generic [ref=e101]: useSensor
+              - generic [ref=e102]: ","
+              - generic [ref=e103]: "useSensors }"
+              - generic [ref=e104]: from
+              - generic [ref=e106]: "'@dnd-kit/core'"
+              - generic [ref=e107]: ;
+              - generic [ref=e109]: "|"
+              - generic [ref=e111]: ^
+              - generic [ref=e112]: ^
+              - generic [ref=e113]: ^
+              - generic [ref=e114]: ^
+              - generic [ref=e115]: ^
+              - generic [ref=e116]: ^
+              - generic [ref=e117]: ^
+              - generic [ref=e118]: ^
+              - generic [ref=e119]: ^
+              - generic [ref=e120]: ^
+              - generic [ref=e121]: ^
+              - generic [ref=e122]: ^
+              - generic [ref=e123]: ^
+              - generic [ref=e124]: ^
+              - generic [ref=e125]: ^
+              - generic [ref=e126]: ^
+              - generic [ref=e127]: ^
+              - generic [ref=e128]: ^
+              - generic [ref=e129]: ^
+              - generic [ref=e130]: ^
+              - generic [ref=e131]: ^
+              - generic [ref=e132]: ^
+              - generic [ref=e133]: ^
+              - generic [ref=e134]: ^
+              - generic [ref=e135]: ^
+              - generic [ref=e136]: ^
+              - generic [ref=e137]: ^
+              - generic [ref=e138]: ^
+              - generic [ref=e139]: ^
+              - generic [ref=e140]: ^
+              - generic [ref=e141]: ^
+              - generic [ref=e142]: ^
+              - generic [ref=e143]: ^
+              - generic [ref=e144]: ^
+              - generic [ref=e145]: ^
+              - generic [ref=e146]: ^
+              - generic [ref=e147]: ^
+              - generic [ref=e148]: ^
+              - generic [ref=e149]: ^
+              - generic [ref=e150]: ^
+              - generic [ref=e151]: ^
+              - generic [ref=e152]: ^
+              - generic [ref=e153]: ^
+              - generic [ref=e154]: ^
+              - generic [ref=e155]: ^
+              - generic [ref=e156]: ^
+              - generic [ref=e157]: ^
+              - generic [ref=e158]: ^
+              - generic [ref=e159]: ^
+              - generic [ref=e160]: ^
+              - generic [ref=e161]: ^
+              - generic [ref=e162]: ^
+              - generic [ref=e163]: ^
+              - generic [ref=e164]: ^
+              - generic [ref=e165]: ^
+              - generic [ref=e166]: ^
+              - generic [ref=e167]: ^
+              - generic [ref=e168]: ^
+              - generic [ref=e169]: ^
+              - generic [ref=e170]: ^
+              - generic [ref=e171]: ^
+              - generic [ref=e172]: ^
+              - generic [ref=e173]: ^
+              - generic [ref=e174]: ^
+              - generic [ref=e175]: ^
+              - generic [ref=e176]: ^
+              - generic [ref=e177]: ^
+              - generic [ref=e178]: ^
+              - generic [ref=e179]: ^
+              - generic [ref=e180]: ^
+              - generic [ref=e181]: ^
+              - generic [ref=e182]: ^
+              - generic [ref=e183]: ^
+              - generic [ref=e184]: ^
+              - generic [ref=e185]: ^
+              - generic [ref=e186]: ^
+              - generic [ref=e187]: ^
+              - generic [ref=e188]: ^
+              - generic [ref=e189]: ^
+              - generic [ref=e190]: ^
+              - generic [ref=e191]: ^
+              - generic [ref=e192]: ^
+              - generic [ref=e193]: ^
+              - generic [ref=e194]: ^
+              - generic [ref=e195]: ^
+              - generic [ref=e196]: ^
+              - generic [ref=e197]: ^
+              - generic [ref=e198]: ^
+              - generic [ref=e199]: ^
+              - generic [ref=e200]: ^
+              - generic [ref=e201]: ^
+              - generic [ref=e202]: ^
+              - generic [ref=e203]: ^
+              - generic [ref=e204]: ^
+              - generic [ref=e205]: ^
+              - generic [ref=e206]: ^
+              - generic [ref=e207]: ^
+              - generic [ref=e208]: ^
+              - generic [ref=e209]: ^
+              - generic [ref=e210]: ^
+              - generic [ref=e211]: ^
+              - generic [ref=e212]: ^
+              - generic [ref=e213]: ^
+              - generic [ref=e214]: ^
+              - generic [ref=e215]: ^
+              - generic [ref=e216]: ^
+              - generic [ref=e217]: ^
+              - generic [ref=e218]: ^
+              - generic [ref=e219]: ^
+              - generic [ref=e220]: ^
+              - generic [ref=e221]: ^
+              - generic [ref=e222]: ^
+              - generic [ref=e224]: 6 |
+              - generic [ref=e226]: import
+              - generic [ref=e227]: "{ arrayMove"
+              - generic [ref=e228]: ","
+              - generic [ref=e230]: SortableContext
+              - generic [ref=e231]: ","
+              - generic [ref=e232]: sortableKeyboardCoordinates
+              - generic [ref=e233]: ","
+              - generic [ref=e234]: "verticalListSortingStrategy }"
+              - generic [ref=e235]: from
+              - generic [ref=e237]: "'@dnd-kit/sortable'"
+              - generic [ref=e238]: ;
+              - generic [ref=e240]: 7 |
+              - generic [ref=e242]: import
+              - generic [ref=e243]: "{ useSortable }"
+              - generic [ref=e244]: from
+              - generic [ref=e246]: "'@dnd-kit/sortable'"
+              - generic [ref=e247]: ;
+              - generic [ref=e249]: 8 |
+              - generic [ref=e251]: import
+              - generic [ref=e252]: "{"
+              - generic [ref=e253]: CSS
+              - generic [ref=e254]: "}"
+              - generic [ref=e255]: from
+              - generic [ref=e257]: "'@dnd-kit/utilities'"
+              - generic [ref=e258]: ;
+              - generic [ref=e259]:
+                - text: "Import traces: Client Component Browser: ./components/uploader/ImageUploader.tsx [Client Component Browser] ./app/(admin)/listings/components/ListingTypeForm.tsx [Client Component Browser] ./app/(admin)/listings/page.tsx [Client Component Browser] ./app/(admin)/listings/page.tsx [Server Component] Client Component SSR: ./components/uploader/ImageUploader.tsx [Client Component SSR] ./app/(admin)/listings/components/ListingTypeForm.tsx [Client Component SSR] ./app/(admin)/listings/page.tsx [Client Component SSR] ./app/(admin)/listings/page.tsx [Server Component]"
+                - link "https://nextjs.org/docs/messages/module-not-found" [ref=e260] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/messages/module-not-found
+        - generic [ref=e261]:
+          - generic [ref=e262]: "1"
+          - generic [ref=e263]: "2"
+    - generic [ref=e268] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e269] [cursor=pointer]:
+        - img [ref=e270] [cursor=pointer]
+      - button "Open issues overlay" [ref=e274] [cursor=pointer]:
+        - generic [ref=e275] [cursor=pointer]:
+          - generic [ref=e276] [cursor=pointer]: "0"
+          - generic [ref=e277] [cursor=pointer]: "1"
+        - generic [ref=e278] [cursor=pointer]: Issue
+  - alert [ref=e279]
+  - generic [ref=e280]:
+    - generic [ref=e282]:
+      - generic [ref=e284]:
+        - generic [ref=e286]: T
+        - generic [ref=e287]: Tripfluence
+      - navigation [ref=e288]:
+        - link "Dashboard" [ref=e289] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e290] [cursor=pointer]
+          - generic [ref=e295] [cursor=pointer]: Dashboard
+        - link "Listings" [ref=e296] [cursor=pointer]:
+          - /url: /listings
+          - img [ref=e297] [cursor=pointer]
+          - generic [ref=e298] [cursor=pointer]: Listings
+        - link "Spaces" [ref=e299] [cursor=pointer]:
+          - /url: /spaces
+          - img [ref=e300] [cursor=pointer]
+          - generic [ref=e304] [cursor=pointer]: Spaces
+        - link "Space Requests" [ref=e305] [cursor=pointer]:
+          - /url: /space-requests
+          - img [ref=e306] [cursor=pointer]
+          - generic [ref=e308] [cursor=pointer]: Space Requests
+        - link "Space Pricing" [ref=e309] [cursor=pointer]:
+          - /url: /space-pricing
+          - img [ref=e310] [cursor=pointer]
+          - generic [ref=e312] [cursor=pointer]: Space Pricing
+        - link "Availability" [ref=e313] [cursor=pointer]:
+          - /url: /availability
+          - img [ref=e314] [cursor=pointer]
+          - generic [ref=e316] [cursor=pointer]: Availability
+        - link "Orders 3" [ref=e317] [cursor=pointer]:
+          - /url: /orders
+          - img [ref=e318] [cursor=pointer]
+          - generic [ref=e322] [cursor=pointer]: Orders
+          - generic [ref=e323] [cursor=pointer]: "3"
+        - link "Customers" [ref=e324] [cursor=pointer]:
+          - /url: /customers
+          - img [ref=e325] [cursor=pointer]
+          - generic [ref=e330] [cursor=pointer]: Customers
+        - link "Reviews" [ref=e331] [cursor=pointer]:
+          - /url: /reviews
+          - img [ref=e332] [cursor=pointer]
+          - generic [ref=e334] [cursor=pointer]: Reviews
+        - link "Widgets" [ref=e335] [cursor=pointer]:
+          - /url: /widgets
+          - img [ref=e336] [cursor=pointer]
+          - generic [ref=e338] [cursor=pointer]: Widgets
+        - link "Social" [ref=e339] [cursor=pointer]:
+          - /url: /social
+          - img [ref=e340] [cursor=pointer]
+          - generic [ref=e346] [cursor=pointer]: Social
+        - link "Event Sync" [ref=e347] [cursor=pointer]:
+          - /url: /event-sync
+          - img [ref=e348] [cursor=pointer]
+          - generic [ref=e350] [cursor=pointer]: Event Sync
+        - link "Integrations" [ref=e351] [cursor=pointer]:
+          - /url: /integrations
+          - img [ref=e352] [cursor=pointer]
+          - generic [ref=e354] [cursor=pointer]: Integrations
+        - link "Marketing" [ref=e355] [cursor=pointer]:
+          - /url: /marketing
+          - img [ref=e356] [cursor=pointer]
+          - generic [ref=e359] [cursor=pointer]: Marketing
+        - link "Reports" [ref=e360] [cursor=pointer]:
+          - /url: /reports
+          - img [ref=e361] [cursor=pointer]
+          - generic [ref=e363] [cursor=pointer]: Reports
+        - link "Settings" [ref=e364] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e365] [cursor=pointer]
+          - generic [ref=e368] [cursor=pointer]: Settings
+      - generic [ref=e370]:
+        - generic [ref=e372]: AD
+        - generic [ref=e373]:
+          - paragraph [ref=e374]: Admin User
+          - paragraph [ref=e375]: admin@tripfluence.com
+    - generic [ref=e376]:
+      - banner [ref=e377]:
+        - generic [ref=e379]:
+          - img [ref=e380]
+          - searchbox "Search..." [ref=e383]
+        - generic [ref=e384]:
+          - button "Toggle theme" [ref=e385]:
+            - img [ref=e386]
+            - generic [ref=e392]: Toggle theme
+          - button "5 Notifications" [ref=e393]:
+            - img [ref=e394]
+            - generic [ref=e397]: "5"
+            - generic [ref=e398]: Notifications
+          - button "AD" [ref=e399]:
+            - generic [ref=e401]: AD
+      - main [ref=e402]:
+        - generic [ref=e403]:
+          - generic [ref=e405]:
+            - heading "Reviews & Moderation" [level=1] [ref=e406]
+            - paragraph [ref=e407]: Manage customer reviews and moderation queue
+          - generic [ref=e408]:
+            - generic [ref=e409]:
+              - img [ref=e410]
+              - generic [ref=e412]: "Filters:"
+            - textbox "Search reviews..." [ref=e413]
+            - combobox [ref=e414]:
+              - generic: Status
+              - img
+            - combobox [ref=e415]:
+              - generic: Listing
+              - img
+            - combobox [ref=e416]:
+              - generic: Rating
+              - img
+            - button "Clear Filters" [ref=e417]
+          - generic [ref=e418]:
+            - generic [ref=e419]:
+              - generic [ref=e420]:
+                - heading "Total Reviews" [level=3] [ref=e421]
+                - img [ref=e422]
+              - generic [ref=e424]:
+                - generic [ref=e425]: "4"
+                - paragraph [ref=e426]: "Average: 4.8/5"
+            - generic [ref=e427]:
+              - generic [ref=e428]:
+                - heading "Pending" [level=3] [ref=e429]
+                - img [ref=e430]
+              - generic [ref=e432]:
+                - generic [ref=e433]: "1"
+                - paragraph [ref=e434]: Awaiting moderation
+            - generic [ref=e435]:
+              - generic [ref=e436]:
+                - heading "Approved" [level=3] [ref=e437]
+                - img [ref=e438]
+              - generic [ref=e441]:
+                - generic [ref=e442]: "4"
+                - paragraph [ref=e443]: Live reviews
+            - generic [ref=e444]:
+              - generic [ref=e445]:
+                - heading "Rejected" [level=3] [ref=e446]
+                - img [ref=e447]
+              - generic [ref=e451]:
+                - generic [ref=e452]: "0"
+                - paragraph [ref=e453]: Not published
+            - generic [ref=e454]:
+              - generic [ref=e455]:
+                - heading "Verified" [level=3] [ref=e456]
+                - img [ref=e457]
+              - generic [ref=e459]:
+                - generic [ref=e460]: "4"
+                - paragraph [ref=e461]: Verified purchases
+            - generic [ref=e462]:
+              - generic [ref=e463]:
+                - heading "Flagged" [level=3] [ref=e464]
+                - img [ref=e465]
+              - generic [ref=e467]:
+                - generic [ref=e468]: "1"
+                - paragraph [ref=e469]: Need attention
+          - generic [ref=e470]:
+            - generic [ref=e471]:
+              - heading "Rating Distribution" [level=3] [ref=e472]
+              - paragraph [ref=e473]: Breakdown of reviews by star rating
+            - generic [ref=e475]:
+              - generic [ref=e476]:
+                - generic [ref=e477]:
+                  - generic [ref=e478]: "5"
+                  - img [ref=e479]
+                - generic [ref=e484]: "3"
+              - generic [ref=e485]:
+                - generic [ref=e486]:
+                  - generic [ref=e487]: "4"
+                  - img [ref=e488]
+                - generic [ref=e493]: "1"
+              - generic [ref=e494]:
+                - generic [ref=e495]:
+                  - generic [ref=e496]: "3"
+                  - img [ref=e497]
+                - generic [ref=e501]: "0"
+              - generic [ref=e502]:
+                - generic [ref=e503]:
+                  - generic [ref=e504]: "2"
+                  - img [ref=e505]
+                - generic [ref=e509]: "0"
+              - generic [ref=e510]:
+                - generic [ref=e511]:
+                  - generic [ref=e512]: "1"
+                  - img [ref=e513]
+                - generic [ref=e517]: "0"
+          - generic [ref=e518]:
+            - generic [ref=e519]:
+              - textbox "Search reviews..." [ref=e520]
+              - button "Columns" [ref=e521]:
+                - text: Columns
+                - img [ref=e522]
+            - table [ref=e526]:
+              - rowgroup [ref=e527]:
+                - row "Review Listing Rating Status Verified Reply Date" [ref=e528]:
+                  - cell "Review" [ref=e529]:
+                    - button "Review" [ref=e530]:
+                      - text: Review
+                      - img [ref=e531]
+                  - cell "Listing" [ref=e534]
+                  - cell "Rating" [ref=e535]:
+                    - button "Rating" [ref=e536]:
+                      - text: Rating
+                      - img [ref=e537]
+                  - cell "Status" [ref=e540]
+                  - cell "Verified" [ref=e541]
+                  - cell "Reply" [ref=e542]
+                  - cell "Date" [ref=e543]:
+                    - button "Date" [ref=e544]:
+                      - text: Date
+                      - img [ref=e545]
+                  - cell [ref=e548]
+              - rowgroup [ref=e549]:
+                - row "Absolutely Amazing Experience! The sunset yoga retreat was everything I hoped for and more. The instructor was knowledgeable, the setting was breathtaking, and the overall experience was transformative. I can't wait to book again! by Sarah Johnson Sunset Yoga Retreat (5) Approved Verified Replied Jan 21, 2024 Open menu" [ref=e550]:
+                  - cell "Absolutely Amazing Experience! The sunset yoga retreat was everything I hoped for and more. The instructor was knowledgeable, the setting was breathtaking, and the overall experience was transformative. I can't wait to book again! by Sarah Johnson" [ref=e551]:
+                    - generic [ref=e552]:
+                      - generic [ref=e553]: Absolutely Amazing Experience!
+                      - generic [ref=e554]: The sunset yoga retreat was everything I hoped for and more. The instructor was knowledgeable, the setting was breathtaking, and the overall experience was transformative. I can't wait to book again!
+                      - generic [ref=e555]: by Sarah Johnson
+                  - cell "Sunset Yoga Retreat" [ref=e556]:
+                    - generic [ref=e557]: Sunset Yoga Retreat
+                  - cell "(5)" [ref=e558]:
+                    - generic [ref=e559]:
+                      - img [ref=e560]
+                      - img [ref=e562]
+                      - img [ref=e564]
+                      - img [ref=e566]
+                      - img [ref=e568]
+                      - generic [ref=e570]: (5)
+                  - cell "Approved" [ref=e571]:
+                    - generic [ref=e572]: Approved
+                  - cell "Verified" [ref=e573]:
+                    - generic [ref=e574]: Verified
+                  - cell "Replied" [ref=e575]:
+                    - generic [ref=e576]:
+                      - img [ref=e577]
+                      - generic [ref=e579]: Replied
+                  - cell "Jan 21, 2024" [ref=e580]:
+                    - generic [ref=e581]: Jan 21, 2024
+                  - cell "Open menu" [ref=e582]:
+                    - button "Open menu" [ref=e583]:
+                      - generic [ref=e584]: Open menu
+                      - img [ref=e585]
+                - row "Great Learning Experience The cooking class was very informative and hands-on. Chef Maria was excellent at explaining techniques. The only minor issue was that some ingredients weren't as fresh as expected, but overall a great experience. by Michael Chen Farm-to-Table Cooking Class (4) Approved Verified No reply Jan 23, 2024 Open menu" [ref=e589]:
+                  - cell "Great Learning Experience The cooking class was very informative and hands-on. Chef Maria was excellent at explaining techniques. The only minor issue was that some ingredients weren't as fresh as expected, but overall a great experience. by Michael Chen" [ref=e590]:
+                    - generic [ref=e591]:
+                      - generic [ref=e592]: Great Learning Experience
+                      - generic [ref=e593]: The cooking class was very informative and hands-on. Chef Maria was excellent at explaining techniques. The only minor issue was that some ingredients weren't as fresh as expected, but overall a great experience.
+                      - generic [ref=e594]: by Michael Chen
+                  - cell "Farm-to-Table Cooking Class" [ref=e595]:
+                    - generic [ref=e596]: Farm-to-Table Cooking Class
+                  - cell "(4)" [ref=e597]:
+                    - generic [ref=e598]:
+                      - img [ref=e599]
+                      - img [ref=e601]
+                      - img [ref=e603]
+                      - img [ref=e605]
+                      - img [ref=e607]
+                      - generic [ref=e609]: (4)
+                  - cell "Approved" [ref=e610]:
+                    - generic [ref=e611]: Approved
+                  - cell "Verified" [ref=e612]:
+                    - generic [ref=e613]: Verified
+                  - cell "No reply" [ref=e614]:
+                    - generic [ref=e615]: No reply
+                  - cell "Jan 23, 2024" [ref=e616]:
+                    - generic [ref=e617]: Jan 23, 2024
+                  - cell "Open menu" [ref=e618]:
+                    - button "Open menu" [ref=e619]:
+                      - generic [ref=e620]: Open menu
+                      - img [ref=e621]
+                - row "Exceptional Dining Experience From the moment we walked in, the service was impeccable. The food was beautifully presented and tasted even better. The wine pairing was perfect. Worth every penny! by David Kim Fine Dining Restaurant (5) Approved Verified No reply Jan 20, 2024 Open menu" [ref=e625]:
+                  - cell "Exceptional Dining Experience From the moment we walked in, the service was impeccable. The food was beautifully presented and tasted even better. The wine pairing was perfect. Worth every penny! by David Kim" [ref=e626]:
+                    - generic [ref=e627]:
+                      - generic [ref=e628]: Exceptional Dining Experience
+                      - generic [ref=e629]: From the moment we walked in, the service was impeccable. The food was beautifully presented and tasted even better. The wine pairing was perfect. Worth every penny!
+                      - generic [ref=e630]: by David Kim
+                  - cell "Fine Dining Restaurant" [ref=e631]:
+                    - generic [ref=e632]: Fine Dining Restaurant
+                  - cell "(5)" [ref=e633]:
+                    - generic [ref=e634]:
+                      - img [ref=e635]
+                      - img [ref=e637]
+                      - img [ref=e639]
+                      - img [ref=e641]
+                      - img [ref=e643]
+                      - generic [ref=e645]: (5)
+                  - cell "Approved" [ref=e646]:
+                    - generic [ref=e647]: Approved
+                  - cell "Verified" [ref=e648]:
+                    - generic [ref=e649]: Verified
+                  - cell "No reply" [ref=e650]:
+                    - generic [ref=e651]: No reply
+                  - cell "Jan 20, 2024" [ref=e652]:
+                    - generic [ref=e653]: Jan 20, 2024
+                  - cell "Open menu" [ref=e654]:
+                    - button "Open menu" [ref=e655]:
+                      - generic [ref=e656]: Open menu
+                      - img [ref=e657]
+                - row "Good but could be better The yoga session was decent, but I expected more for the price. The instructor was good but seemed rushed. The location was beautiful though. Not sure if I'd book again at this price point. by Jennifer Smith Sunset Yoga Retreat (3) Pending Unverified No reply Jan 25, 2024 Open menu" [ref=e661]:
+                  - cell "Good but could be better The yoga session was decent, but I expected more for the price. The instructor was good but seemed rushed. The location was beautiful though. Not sure if I'd book again at this price point. by Jennifer Smith" [ref=e662]:
+                    - generic [ref=e663]:
+                      - generic [ref=e664]: Good but could be better
+                      - generic [ref=e665]: The yoga session was decent, but I expected more for the price. The instructor was good but seemed rushed. The location was beautiful though. Not sure if I'd book again at this price point.
+                      - generic [ref=e666]: by Jennifer Smith
+                  - cell "Sunset Yoga Retreat" [ref=e667]:
+                    - generic [ref=e668]: Sunset Yoga Retreat
+                  - cell "(3)" [ref=e669]:
+                    - generic [ref=e670]:
+                      - img [ref=e671]
+                      - img [ref=e673]
+                      - img [ref=e675]
+                      - img [ref=e677]
+                      - img [ref=e679]
+                      - generic [ref=e681]: (3)
+                  - cell "Pending" [ref=e682]:
+                    - generic [ref=e683]: Pending
+                  - cell "Unverified" [ref=e684]:
+                    - generic [ref=e685]: Unverified
+                  - cell "No reply" [ref=e686]:
+                    - generic [ref=e687]: No reply
+                  - cell "Jan 25, 2024" [ref=e688]:
+                    - generic [ref=e689]: Jan 25, 2024
+                  - cell "Open menu" [ref=e690]:
+                    - button "Open menu" [ref=e691]:
+                      - generic [ref=e692]: Open menu
+                      - img [ref=e693]
+                - row "Paradise Found! This villa exceeded all our expectations. The views are absolutely stunning, the amenities are top-notch, and the staff was incredibly helpful. Perfect for a romantic getaway or family vacation. by Emily Rodriguez Luxury Beach Villa (5) Approved Verified No reply Jan 26, 2024 Open menu" [ref=e697]:
+                  - cell "Paradise Found! This villa exceeded all our expectations. The views are absolutely stunning, the amenities are top-notch, and the staff was incredibly helpful. Perfect for a romantic getaway or family vacation. by Emily Rodriguez" [ref=e698]:
+                    - generic [ref=e699]:
+                      - generic [ref=e700]: Paradise Found!
+                      - generic [ref=e701]: This villa exceeded all our expectations. The views are absolutely stunning, the amenities are top-notch, and the staff was incredibly helpful. Perfect for a romantic getaway or family vacation.
+                      - generic [ref=e702]: by Emily Rodriguez
+                  - cell "Luxury Beach Villa" [ref=e703]:
+                    - generic [ref=e704]: Luxury Beach Villa
+                  - cell "(5)" [ref=e705]:
+                    - generic [ref=e706]:
+                      - img [ref=e707]
+                      - img [ref=e709]
+                      - img [ref=e711]
+                      - img [ref=e713]
+                      - img [ref=e715]
+                      - generic [ref=e717]: (5)
+                  - cell "Approved" [ref=e718]:
+                    - generic [ref=e719]: Approved
+                  - cell "Verified" [ref=e720]:
+                    - generic [ref=e721]: Verified
+                  - cell "No reply" [ref=e722]:
+                    - generic [ref=e723]: No reply
+                  - cell "Jan 26, 2024" [ref=e724]:
+                    - generic [ref=e725]: Jan 26, 2024
+                  - cell "Open menu" [ref=e726]:
+                    - button "Open menu" [ref=e727]:
+                      - generic [ref=e728]: Open menu
+                      - img [ref=e729]
+                - row "Disappointing Experience The class was overcrowded and the instructor seemed overwhelmed. We didn't get much hands-on experience as promised. The recipes were basic and not worth the high price. Would not recommend. by Robert Wilson Farm-to-Table Cooking Class (2) Flagged Unverified No reply Jan 25, 2024 Open menu" [ref=e733]:
+                  - cell "Disappointing Experience The class was overcrowded and the instructor seemed overwhelmed. We didn't get much hands-on experience as promised. The recipes were basic and not worth the high price. Would not recommend. by Robert Wilson" [ref=e734]:
+                    - generic [ref=e735]:
+                      - generic [ref=e736]: Disappointing Experience
+                      - generic [ref=e737]: The class was overcrowded and the instructor seemed overwhelmed. We didn't get much hands-on experience as promised. The recipes were basic and not worth the high price. Would not recommend.
+                      - generic [ref=e738]: by Robert Wilson
+                  - cell "Farm-to-Table Cooking Class" [ref=e739]:
+                    - generic [ref=e740]: Farm-to-Table Cooking Class
+                  - cell "(2)" [ref=e741]:
+                    - generic [ref=e742]:
+                      - img [ref=e743]
+                      - img [ref=e745]
+                      - img [ref=e747]
+                      - img [ref=e749]
+                      - img [ref=e751]
+                      - generic [ref=e753]: (2)
+                  - cell "Flagged" [ref=e754]:
+                    - generic [ref=e755]: Flagged
+                  - cell "Unverified" [ref=e756]:
+                    - generic [ref=e757]: Unverified
+                  - cell "No reply" [ref=e758]:
+                    - generic [ref=e759]: No reply
+                  - cell "Jan 25, 2024" [ref=e760]:
+                    - generic [ref=e761]: Jan 25, 2024
+                  - cell "Open menu" [ref=e762]:
+                    - button "Open menu" [ref=e763]:
+                      - generic [ref=e764]: Open menu
+                      - img [ref=e765]
+            - generic [ref=e769]:
+              - generic [ref=e770]: 0 of 6 row(s) selected.
+              - generic [ref=e771]:
+                - button "Previous" [disabled]
+                - button "Next" [disabled]
+  - region "Notifications alt+T"
+```

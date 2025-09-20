@@ -9,7 +9,7 @@ import { SpaceStatus } from '@prisma/client';
 // POST /api/space/[id]/publish - Publish space
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -23,12 +23,13 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const data = SpacePublishSchema.parse({ id: params.id });
+    const { id } = await params;
+    const data = SpacePublishSchema.parse({ id });
 
     // Check if space exists and belongs to user's business
     const existingSpace = await db.space.findFirst({
       where: {
-        id: params.id,
+        id: id,
         businessId: user.businessId,
       },
       include: {
@@ -66,7 +67,7 @@ export async function POST(
 
     // Update space status
     const updatedSpace = await db.space.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         status: SpaceStatus.PUBLISHED,
       },
@@ -83,7 +84,7 @@ export async function POST(
       'user',
       'SPACE_PUBLISHED',
       'Space',
-      params.id,
+      id,
       user.businessId,
       {
         title: updatedSpace.title,

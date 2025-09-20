@@ -143,13 +143,13 @@ export async function POST(request: NextRequest) {
                 AND: [
                   { start: { lt: data.end } },
                   { end: { gte: data.end } },
-                },
+                ],
               },
               {
                 AND: [
                   { start: { gte: data.start } },
                   { end: { lte: data.end } },
-                },
+                ],
               },
             ],
           },
@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
             AND: [
               { start: { gte: data.start } },
               { end: { lte: data.end } },
-            },
+            ],
           },
         ],
       },

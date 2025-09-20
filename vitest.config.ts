@@ -3,9 +3,11 @@ import path from 'path'
 
 export default defineConfig({
   test: {
-    environment: 'node',
-    include: ['tests/unit/**/*.test.ts'],
+    environment: 'jsdom',
+    include: ['tests/unit/**/*.test.ts', 'src/**/*.test.ts'],
     exclude: ['tests/e2e/**/*', 'node_modules/**/*'],
+    setupFiles: ['src/__tests__/setup.ts'],
+    globals: true,
   },
   resolve: {
     alias: {

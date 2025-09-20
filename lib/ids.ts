@@ -1,4 +1,7 @@
-import { customAlphabet } from 'nanoid';
+import { customAlphabet, nanoid } from 'nanoid';
+
+// Re-export nanoid for direct usage
+export { nanoid };
 
 // Create custom alphabets for different ID types
 const orderAlphabet = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8);

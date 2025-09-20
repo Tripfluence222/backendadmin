@@ -6,16 +6,20 @@ import { db } from '@/lib/db';
 import { getMinHourlyRate } from '@/lib/space/pricing';
 
 interface VenueDetailPageProps {
-  params: {
+  params: Promise<{
     city: string;
     slug: string;
-  };
+  }>;
 }
 
+// Force dynamic rendering to avoid SSR issues with client components
+export const dynamic = 'force-dynamic';
+
 export default async function VenueDetailPage({ params }: VenueDetailPageProps) {
+  const { city, slug } = await params;
   const space = await db.space.findFirst({
     where: {
-      slug: params.slug,
+      slug: slug,
       status: 'PUBLISHED',
     },
     include: {
@@ -61,7 +65,7 @@ export default async function VenueDetailPage({ params }: VenueDetailPageProps) 
 export async function generateMetadata({ params }: VenueDetailPageProps) {
   const space = await db.space.findFirst({
     where: {
-      slug: params.slug,
+      slug: slug,
       status: 'PUBLISHED',
     },
     include: {

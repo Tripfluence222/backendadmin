@@ -8,7 +8,7 @@ import { getCurrentUser } from '@/lib/auth';
 // POST /api/space/requests/[id]/decline - Decline space request
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -22,13 +22,14 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const { id } = await params;
     const body = await request.json();
-    const data = SpaceRequestDecisionSchema.parse({ ...body, requestId: params.id, decision: 'decline' });
+    const data = SpaceRequestDecisionSchema.parse({ ...body, requestId: id, decision: 'decline' });
 
     // Check if space request exists and belongs to user's business
     const existingRequest = await db.spaceRequest.findFirst({
       where: {
-        id: params.id,
+        id: id,
         businessId: user.businessId,
       },
       include: {
@@ -54,7 +55,7 @@ export async function POST(
 
     // Update the request status
     const updatedRequest = await db.spaceRequest.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         status: 'DECLINED',
       },
@@ -75,7 +76,7 @@ export async function POST(
       'user',
       'SPACE_REQUEST_DECLINED',
       'SpaceRequest',
-      params.id,
+      id,
       user.businessId,
       {
         spaceId: existingRequest.spaceId,

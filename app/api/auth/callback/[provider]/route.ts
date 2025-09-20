@@ -14,16 +14,17 @@ const callbackSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { provider: string } }
+  { params }: { params: Promise<{ provider: string }> }
 ) {
+  const { provider } = await params;
   try {
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
     const state = searchParams.get('state');
-    const provider = params.provider as SocialProvider;
+    const providerEnum = provider as SocialProvider;
 
     // Validate input
-    const validation = callbackSchema.safeParse({ code, state, provider });
+    const validation = callbackSchema.safeParse({ code, state, provider: providerEnum });
     if (!validation.success) {
       return NextResponse.redirect(
         `${process.env.OAUTH_REDIRECT_BASE || 'http://localhost:3000'}/social?error=invalid_parameters`

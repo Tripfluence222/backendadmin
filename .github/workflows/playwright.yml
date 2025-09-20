@@ -28,7 +28,7 @@ jobs:
       run: npm ci
     
     - name: Install Playwright browsers
-      run: npx playwright install --with-deps ${{ matrix.project === 'desktop-chromium' && 'chromium' || 'webkit' }}
+      run: npx playwright install --with-deps ${{ matrix.project == 'desktop-chromium' && 'chromium' || 'webkit' }}
     
     - name: Start application
       run: npm run dev &

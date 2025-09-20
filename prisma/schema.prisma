@@ -81,16 +81,22 @@ model Listing {
   id            String        @id @default(cuid())
   businessId    String
   title         String
+  slug          String        @unique
   type          ListingType
   status        ListingStatus @default(DRAFT)
-  slug          String
-  description   String
-  seoMeta       Json          @default("{}")
-  media         Json          @default("[]")
-  location      String?
+  description   String?
+  category      String?
+  locationCity  String?
+  locationCountry String?
+  // images
+  photos        Json?         // string[] URLs
+  // optional common commerce fields
+  currency      String?       // e.g. "USD"
+  priceFrom     Int?          // minor units (cents)
   capacity      Int?
-  price         Decimal?
-  currency      String        @default("USD")
+  // type-specific payload
+  details       Json?         // typed by Zod discriminated union
+  seoMeta       String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -102,7 +108,6 @@ model Listing {
   reviews        Review[]
   eventSyncs     EventSync[]
 
-  @@unique([businessId, slug])
   @@map("listings")
 }
 

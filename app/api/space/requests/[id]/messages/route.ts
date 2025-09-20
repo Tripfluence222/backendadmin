@@ -8,7 +8,7 @@ import { getCurrentUser } from '@/lib/auth';
 // GET /api/space/requests/[id]/messages - Get messages for space request
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -16,10 +16,11 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     // Check if space request exists and user has access
     const spaceRequest = await db.spaceRequest.findFirst({
       where: {
-        id: params.id,
+        id,
         OR: [
           { organizerId: user.id },
           { 
@@ -45,7 +46,7 @@ export async function GET(
 
     const messages = await db.spaceMessage.findMany({
       where: {
-        spaceReqId: params.id,
+        spaceReqId: id,
       },
       orderBy: { createdAt: 'asc' },
     });
@@ -63,7 +64,7 @@ export async function GET(
 // POST /api/space/requests/[id]/messages - Send message
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -71,13 +72,14 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
-    const data = SpaceMessageSchema.parse({ ...body, spaceReqId: params.id });
+    const data = SpaceMessageSchema.parse({ ...body, spaceReqId: id });
 
     // Check if space request exists and user has access
     const spaceRequest = await db.spaceRequest.findFirst({
       where: {
-        id: params.id,
+        id: id,
         OR: [
           { organizerId: user.id },
           { 
@@ -112,7 +114,7 @@ export async function POST(
     // Create message
     const message = await db.spaceMessage.create({
       data: {
-        spaceReqId: params.id,
+        spaceReqId: id,
         senderId: user.id,
         body: data.body,
         attachments: data.attachments,
@@ -128,7 +130,7 @@ export async function POST(
       message.id,
       spaceRequest.space.businessId,
       {
-        spaceRequestId: params.id,
+        spaceRequestId: id,
         spaceTitle: spaceRequest.space.title,
         messageLength: data.body.length,
         hasAttachments: data.attachments && data.attachments.length > 0,

@@ -9,7 +9,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMont
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -20,7 +20,7 @@ import {
 import { DrawerForm } from "@/components/forms/drawer-form";
 import { availabilityApi, AvailabilitySlot } from "@/lib/api/availability";
 import { listingsApi } from "@/lib/api/listings";
-import { createSlotSchema, updateSlotSchema, bulkCreateSlotsSchema } from "@/lib/validation/availability";
+import { createSlotSchema, updateSlotSchema, bulkCreateSlotsSchema, CreateSlotInput, UpdateSlotInput, BulkCreateSlotsInput } from "@/lib/lib/validation/availability";
 import { SlotModal } from "./slot-modal";
 
 export default function AvailabilityPage() {
@@ -66,7 +66,7 @@ export default function AvailabilityPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => availabilityApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateSlotInput }) => availabilityApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["availability"] });
       toast.success("Slot updated successfully");
@@ -127,17 +127,17 @@ export default function AvailabilityPage() {
     return filteredSlots.filter(slot => isSameDay(new Date(slot.date), date));
   };
 
-  const handleCreate = (data: any) => {
+  const handleCreate = (data: CreateSlotInput) => {
     createMutation.mutate(data);
   };
 
-  const handleUpdate = (data: any) => {
+  const handleUpdate = (data: UpdateSlotInput) => {
     if (editingSlot) {
       updateMutation.mutate({ id: editingSlot.id, data });
     }
   };
 
-  const handleBulkCreate = (data: any) => {
+  const handleBulkCreate = (data: BulkCreateSlotsInput) => {
     bulkCreateMutation.mutate(data);
   };
 
@@ -266,7 +266,7 @@ export default function AvailabilityPage() {
           return (
             <div
               key={day.toISOString()}
-              className={`min-h-[120px] p-2 border border-border ${
+              className={`min-h-[120px] p-2 border ${
                 isCurrentMonth ? 'bg-background' : 'bg-muted/50'
               } ${isToday ? 'ring-2 ring-primary' : ''}`}
             >

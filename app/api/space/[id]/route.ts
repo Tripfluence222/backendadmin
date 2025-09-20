@@ -8,7 +8,7 @@ import { getCurrentUser } from '@/lib/auth';
 // GET /api/space/[id] - Get space details
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -16,9 +16,10 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const space = await db.space.findFirst({
       where: {
-        id: params.id,
+        id,
         businessId: user.businessId,
       },
       include: {
@@ -63,7 +64,7 @@ export async function GET(
 // PATCH /api/space/[id] - Update space
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -77,13 +78,14 @@ export async function PATCH(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const { id } = await params;
     const body = await request.json();
-    const data = SpaceUpdateSchema.parse({ ...body, id: params.id });
+    const data = SpaceUpdateSchema.parse({ ...body, id });
 
     // Check if space exists and belongs to user's business
     const existingSpace = await db.space.findFirst({
       where: {
-        id: params.id,
+        id: id,
         businessId: user.businessId,
       },
     });
@@ -108,7 +110,7 @@ export async function PATCH(
 
     // Update space
     const updatedSpace = await db.space.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         title: data.title,
         slug: data.slug,
@@ -128,12 +130,12 @@ export async function PATCH(
     // Update amenities if provided
     if (data.amenities) {
       await db.spaceAmenity.deleteMany({
-        where: { spaceId: params.id },
+        where: { spaceId: id },
       });
 
       await db.spaceAmenity.createMany({
         data: data.amenities.map(amenity => ({
-          spaceId: params.id,
+          spaceId: id,
           label: amenity.label,
           category: amenity.category,
         })),
@@ -143,12 +145,12 @@ export async function PATCH(
     // Update rules if provided
     if (data.rules) {
       await db.spaceRule.deleteMany({
-        where: { spaceId: params.id },
+        where: { spaceId: id },
       });
 
       await db.spaceRule.createMany({
         data: data.rules.map(rule => ({
-          spaceId: params.id,
+          spaceId: id,
           label: rule.label,
           required: rule.required,
         })),
@@ -161,7 +163,7 @@ export async function PATCH(
       'user',
       'SPACE_UPDATED',
       'Space',
-      params.id,
+      id,
       user.businessId,
       {
         title: updatedSpace.title,
@@ -190,7 +192,7 @@ export async function PATCH(
 // DELETE /api/space/[id] - Delete space
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -204,10 +206,12 @@ export async function DELETE(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const { id } = await params;
+
     // Check if space exists and belongs to user's business
     const existingSpace = await db.space.findFirst({
       where: {
-        id: params.id,
+        id: id,
         businessId: user.businessId,
       },
     });
@@ -219,7 +223,7 @@ export async function DELETE(
     // Check if space has active requests
     const activeRequests = await db.spaceRequest.count({
       where: {
-        spaceId: params.id,
+        spaceId: id,
         status: {
           in: ['PENDING', 'NEEDS_PAYMENT', 'PAID_HOLD', 'CONFIRMED'],
         },
@@ -235,7 +239,7 @@ export async function DELETE(
 
     // Delete space (cascade will handle related records)
     await db.space.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     // Log the action
@@ -244,7 +248,7 @@ export async function DELETE(
       'user',
       'SPACE_DELETED',
       'Space',
-      params.id,
+      id,
       user.businessId,
       {
         title: existingSpace.title,

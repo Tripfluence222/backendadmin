@@ -5,12 +5,13 @@ import { getMinHourlyRate } from '@/lib/space/pricing';
 // GET /api/public/space/[id] - Get public space details
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const space = await db.space.findFirst({
       where: {
-        id: params.id,
+        id,
         status: 'PUBLISHED',
       },
       include: {

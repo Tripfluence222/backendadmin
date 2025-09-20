@@ -5,7 +5,7 @@ import { ok, badReq, serverErr } from "@/lib/http";
 import { requireAuth, requirePermission } from "@/lib/auth";
 import { logAction, AUDIT_ACTIONS } from "@/lib/audit";
 import { triggerWebhook, WEBHOOK_EVENTS } from "@/lib/webhooks";
-import { createListingSchema, updateListingSchema, listingFiltersSchema } from "@/lib/validation/listings";
+import { ListingCreateSchema, ListingUpdateSchema } from "@/lib/validation/listings";
 
 // GET /api/listings - List listings with filters
 export async function GET(request: NextRequest) {
@@ -14,13 +14,14 @@ export async function GET(request: NextRequest) {
     requirePermission(user, "listings:read");
     
     const { searchParams } = new URL(request.url);
-    const filters = listingFiltersSchema.parse({
+    const filters = {
       type: searchParams.get("type") || undefined,
       status: searchParams.get("status") || undefined,
+      city: searchParams.get("city") || undefined,
       q: searchParams.get("q") || undefined,
       page: parseInt(searchParams.get("page") || "1"),
       limit: parseInt(searchParams.get("limit") || "20"),
-    });
+    };
     
     const where: any = {
       businessId: user.businessId,
@@ -28,11 +29,13 @@ export async function GET(request: NextRequest) {
     
     if (filters.type) where.type = filters.type;
     if (filters.status) where.status = filters.status;
+    if (filters.city) where.locationCity = { contains: filters.city, mode: "insensitive" };
     if (filters.q) {
       where.OR = [
         { title: { contains: filters.q, mode: "insensitive" } },
         { description: { contains: filters.q, mode: "insensitive" } },
         { slug: { contains: filters.q, mode: "insensitive" } },
+        { category: { contains: filters.q, mode: "insensitive" } },
       ];
     }
     
@@ -79,13 +82,18 @@ export async function POST(request: NextRequest) {
     requirePermission(user, "listings:create");
     
     const body = await request.json();
-    const data = createListingSchema.parse(body);
+    const data = ListingCreateSchema.parse(body);
+    
+    // Ensure details.kind matches type
+    if (data.details && data.details.kind !== data.type) {
+      data.details.kind = data.type as any;
+    }
     
     const listing = await db.listing.create({
       data: {
         ...data,
         businessId: user.businessId,
-        status: "DRAFT",
+        status: data.status || "DRAFT",
       },
       include: {
         _count: {
@@ -139,7 +147,7 @@ export async function PATCH(request: NextRequest) {
     }
     
     const body = await request.json();
-    const data = updateListingSchema.parse(body);
+    const data = ListingUpdateSchema.parse(body);
     
     // Check if listing exists and user has access
     const existingListing = await db.listing.findFirst({

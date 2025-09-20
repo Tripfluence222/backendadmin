@@ -7,7 +7,7 @@ import { getCurrentUser } from '@/lib/auth';
 // DELETE /api/space/availability/[slotId] - Delete availability block
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slotId: string } }
+  { params }: { params: Promise<{ slotId: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -21,10 +21,11 @@ export async function DELETE(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const { slotId } = await params;
     // Find the availability block and verify it belongs to user's business
     const availabilityBlock = await db.spaceAvailability.findFirst({
       where: {
-        id: params.slotId,
+        id: slotId,
         space: {
           businessId: user.businessId,
         },
@@ -75,7 +76,7 @@ export async function DELETE(
 
     // Delete the availability block
     await db.spaceAvailability.delete({
-      where: { id: params.slotId },
+      where: { id: slotId },
     });
 
     // Log the action
@@ -84,7 +85,7 @@ export async function DELETE(
       'user',
       'SPACE_AVAILABILITY_REMOVED',
       'SpaceAvailability',
-      params.slotId,
+      slotId,
       user.businessId,
       {
         spaceId: availabilityBlock.spaceId,

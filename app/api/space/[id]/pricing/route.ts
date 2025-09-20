@@ -9,7 +9,7 @@ import { validatePricingRules } from '@/lib/space/pricing';
 // GET /api/space/[id]/pricing - Get pricing rules
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -23,9 +23,10 @@ export async function GET(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const { id } = await params;
     const space = await db.space.findFirst({
       where: {
-        id: params.id,
+        id,
         businessId: user.businessId,
       },
       include: {
@@ -50,7 +51,7 @@ export async function GET(
 // POST /api/space/[id]/pricing - Update pricing rules
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -64,13 +65,14 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const { id } = await params;
     const body = await request.json();
-    const data = SpacePricingRulesBulkSchema.parse({ ...body, spaceId: params.id });
+    const data = SpacePricingRulesBulkSchema.parse({ ...body, spaceId: id });
 
     // Check if space exists and belongs to user's business
     const existingSpace = await db.space.findFirst({
       where: {
-        id: params.id,
+        id: id,
         businessId: user.businessId,
       },
     });
@@ -90,13 +92,13 @@ export async function POST(
 
     // Delete existing pricing rules
     await db.spacePricingRule.deleteMany({
-      where: { spaceId: params.id },
+      where: { spaceId: id },
     });
 
     // Create new pricing rules
     const pricingRules = await db.spacePricingRule.createMany({
       data: data.rules.map(rule => ({
-        spaceId: params.id,
+        spaceId: id,
         kind: rule.kind,
         amount: rule.amount,
         currency: rule.currency,
@@ -112,7 +114,7 @@ export async function POST(
       'user',
       'SPACE_PRICING_UPDATED',
       'Space',
-      params.id,
+      id,
       user.businessId,
       {
         title: existingSpace.title,

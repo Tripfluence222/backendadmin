@@ -8,7 +8,7 @@ import { getCurrentUser } from '@/lib/auth';
 // POST /api/space/requests/[id]/cancel - Cancel space request
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -16,13 +16,14 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
-    const data = SpaceRequestCancelSchema.parse({ ...body, requestId: params.id });
+    const data = SpaceRequestCancelSchema.parse({ ...body, requestId: id });
 
     // Check if space request exists
     const existingRequest = await db.spaceRequest.findFirst({
       where: {
-        id: params.id,
+        id: id,
       },
       include: {
         space: {
@@ -58,7 +59,7 @@ export async function POST(
 
     // Update the request status
     const updatedRequest = await db.spaceRequest.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         status: 'CANCELLED',
       },
@@ -79,7 +80,7 @@ export async function POST(
       'user',
       'SPACE_REQUEST_CANCELLED',
       'SpaceRequest',
-      params.id,
+      id,
       existingRequest.space.businessId,
       {
         spaceId: existingRequest.spaceId,

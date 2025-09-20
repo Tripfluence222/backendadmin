@@ -1,0 +1,115 @@
+{
+  "timestamp": "2025-09-20T06:05:12.171Z",
+  "baseUrl": "http://localhost:3000",
+  "totalLinks": 16,
+  "workingLinks": 15,
+  "brokenLinks": 1,
+  "results": [
+    {
+      "url": "http://localhost:3000/dashboard",
+      "status": 200,
+      "text": "Dashboard",
+      "href": "/dashboard"
+    },
+    {
+      "url": "http://localhost:3000/listings",
+      "status": 500,
+      "text": "Listings",
+      "href": "/listings",
+      "error": "HTTP 500"
+    },
+    {
+      "url": "http://localhost:3000/spaces",
+      "status": 200,
+      "text": "Spaces",
+      "href": "/spaces"
+    },
+    {
+      "url": "http://localhost:3000/space-requests",
+      "status": 200,
+      "text": "Space Requests",
+      "href": "/space-requests"
+    },
+    {
+      "url": "http://localhost:3000/space-pricing",
+      "status": 200,
+      "text": "Space Pricing",
+      "href": "/space-pricing"
+    },
+    {
+      "url": "http://localhost:3000/availability",
+      "status": 200,
+      "text": "Availability",
+      "href": "/availability"
+    },
+    {
+      "url": "http://localhost:3000/orders",
+      "status": 200,
+      "text": "Orders3",
+      "href": "/orders"
+    },
+    {
+      "url": "http://localhost:3000/customers",
+      "status": 200,
+      "text": "Customers",
+      "href": "/customers"
+    },
+    {
+      "url": "http://localhost:3000/reviews",
+      "status": 200,
+      "text": "Reviews",
+      "href": "/reviews"
+    },
+    {
+      "url": "http://localhost:3000/widgets",
+      "status": 200,
+      "text": "Widgets",
+      "href": "/widgets"
+    },
+    {
+      "url": "http://localhost:3000/social",
+      "status": 200,
+      "text": "Social",
+      "href": "/social"
+    },
+    {
+      "url": "http://localhost:3000/event-sync",
+      "status": 200,
+      "text": "Event Sync",
+      "href": "/event-sync"
+    },
+    {
+      "url": "http://localhost:3000/integrations",
+      "status": 200,
+      "text": "Integrations",
+      "href": "/integrations"
+    },
+    {
+      "url": "http://localhost:3000/marketing",
+      "status": 200,
+      "text": "Marketing",
+      "href": "/marketing"
+    },
+    {
+      "url": "http://localhost:3000/reports",
+      "status": 200,
+      "text": "Reports",
+      "href": "/reports"
+    },
+    {
+      "url": "http://localhost:3000/settings",
+      "status": 200,
+      "text": "Settings",
+      "href": "/settings"
+    }
+  ],
+  "errors": [
+    {
+      "url": "http://localhost:3000/listings",
+      "status": 500,
+      "text": "Listings",
+      "href": "/listings",
+      "error": "HTTP 500"
+    }
+  ]
+}

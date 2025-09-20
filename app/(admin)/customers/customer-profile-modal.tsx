@@ -36,13 +36,14 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Customer, CustomerBooking } from "@/lib/api/customers";
 import { customersApi } from "@/lib/api/customers";
+import { AddCustomerNoteInput, UpdateCustomerPreferencesInput } from "@/lib/lib/validation/customers";
 
 interface CustomerProfileModalProps {
   customer: Customer;
   isOpen: boolean;
   onClose: () => void;
-  onAddNote: (customerId: string, data: any) => void;
-  onUpdatePreferences: (customerId: string, data: any) => void;
+  onAddNote: (customerId: string, data: AddCustomerNoteInput) => void;
+  onUpdatePreferences: (customerId: string, data: UpdateCustomerPreferencesInput) => void;
 }
 
 export function CustomerProfileModal({ 
@@ -328,7 +329,7 @@ export function CustomerProfileModal({
                       <select
                         id="note-type"
                         value={noteType}
-                        onChange={(e) => setNoteType(e.target.value as any)}
+                        onChange={(e) => setNoteType(e.target.value as "general" | "booking" | "payment" | "support")}
                         className="ml-2 px-2 py-1 border rounded"
                       >
                         <option value="general">General</option>

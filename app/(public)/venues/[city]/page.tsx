@@ -6,13 +6,17 @@ import { db } from '@/lib/db';
 import { getMinHourlyRate } from '@/lib/space/pricing';
 
 interface CityPageProps {
-  params: {
+  params: Promise<{
     city: string;
-  };
+  }>;
 }
 
+// Force dynamic rendering to avoid SSR issues with client components
+export const dynamic = 'force-dynamic';
+
 export default async function CityPage({ params }: CityPageProps) {
-  const cityName = params.city.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  const { city } = await params;
+  const cityName = city.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   
   // Get featured spaces for this city
   const spaces = await db.space.findMany({

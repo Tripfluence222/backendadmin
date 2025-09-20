@@ -20,6 +20,7 @@ import { DrawerForm } from "@/components/forms/drawer-form";
 import { listingsApi, Listing } from "@/lib/api/listings";
 import { createListingSchema, updateListingSchema, ListingType, ListingStatus } from "@/lib/validation/listings";
 import { columns } from "./columns";
+import ListingTypeForm from "./components/ListingTypeForm";
 
 export default function ListingsPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -87,10 +88,12 @@ export default function ListingsPage() {
   // Filter listings based on current filters
   const filteredListings = listings.filter((listing) => {
     const matchesSearch = listing.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-                         listing.description.toLowerCase().includes(filters.search.toLowerCase());
-    const matchesType = !filters.type || listing.type === filters.type;
-    const matchesStatus = !filters.status || listing.status === filters.status;
-    const matchesLocation = !filters.location || listing.location.toLowerCase().includes(filters.location.toLowerCase());
+                         (listing.description && listing.description.toLowerCase().includes(filters.search.toLowerCase()));
+    const matchesType = !filters.type || filters.type === "all" || listing.type === filters.type;
+    const matchesStatus = !filters.status || filters.status === "all" || listing.status === filters.status;
+    const matchesLocation = !filters.location || 
+                           (listing.locationCity && listing.locationCity.toLowerCase().includes(filters.location.toLowerCase())) ||
+                           (listing.locationCountry && listing.locationCountry.toLowerCase().includes(filters.location.toLowerCase()));
     
     return matchesSearch && matchesType && matchesStatus && matchesLocation;
   });
@@ -162,11 +165,11 @@ export default function ListingsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="restaurant">Restaurant</SelectItem>
-            <SelectItem value="retreat">Retreat</SelectItem>
-            <SelectItem value="event">Event</SelectItem>
-            <SelectItem value="activity">Activity</SelectItem>
-            <SelectItem value="property">Property</SelectItem>
+            <SelectItem value="RESTAURANT">Restaurant</SelectItem>
+            <SelectItem value="RETREAT">Retreat</SelectItem>
+            <SelectItem value="EVENT">Event</SelectItem>
+            <SelectItem value="ACTIVITY">Activity</SelectItem>
+            <SelectItem value="PROPERTY">Property</SelectItem>
           </SelectContent>
         </Select>
 
@@ -179,9 +182,9 @@ export default function ListingsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="draft">Draft</SelectItem>
-            <SelectItem value="published">Published</SelectItem>
-            <SelectItem value="archived">Archived</SelectItem>
+            <SelectItem value="DRAFT">Draft</SelectItem>
+            <SelectItem value="PUBLISHED">Published</SelectItem>
+            <SelectItem value="ARCHIVED">Archived</SelectItem>
           </SelectContent>
         </Select>
 
@@ -209,19 +212,19 @@ export default function ListingsPage() {
         </div>
         <div className="p-4 border rounded-lg">
           <div className="text-2xl font-bold">
-            {listings.filter(l => l.status === "published").length}
+            {listings.filter(l => l.status === "PUBLISHED").length}
           </div>
           <div className="text-sm text-muted-foreground">Published</div>
         </div>
         <div className="p-4 border rounded-lg">
           <div className="text-2xl font-bold">
-            {listings.filter(l => l.status === "draft").length}
+            {listings.filter(l => l.status === "DRAFT").length}
           </div>
           <div className="text-sm text-muted-foreground">Drafts</div>
         </div>
         <div className="p-4 border rounded-lg">
           <div className="text-2xl font-bold">
-            {listings.filter(l => l.status === "archived").length}
+            {listings.filter(l => l.status === "ARCHIVED").length}
           </div>
           <div className="text-sm text-muted-foreground">Archived</div>
         </div>
@@ -245,100 +248,7 @@ export default function ListingsPage() {
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
       >
-        {(form) => (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Title</label>
-                <Input {...form.register("title")} placeholder="Listing title" />
-                {form.formState.errors.title && (
-                  <p className="text-sm text-red-500">{form.formState.errors.title.message}</p>
-                )}
-              </div>
-              <div>
-                <label className="text-sm font-medium">Type</label>
-                <Select onValueChange={(value) => form.setValue("type", value as ListingType)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="restaurant">Restaurant</SelectItem>
-                    <SelectItem value="retreat">Retreat</SelectItem>
-                    <SelectItem value="event">Event</SelectItem>
-                    <SelectItem value="activity">Activity</SelectItem>
-                    <SelectItem value="property">Property</SelectItem>
-                  </SelectContent>
-                </Select>
-                {form.formState.errors.type && (
-                  <p className="text-sm text-red-500">{form.formState.errors.type.message}</p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Description</label>
-              <textarea
-                {...form.register("description")}
-                className="w-full p-2 border rounded-md"
-                rows={4}
-                placeholder="Describe your listing..."
-              />
-              {form.formState.errors.description && (
-                <p className="text-sm text-red-500">{form.formState.errors.description.message}</p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Category</label>
-                <Input {...form.register("category")} placeholder="e.g., Wellness, Culinary" />
-                {form.formState.errors.category && (
-                  <p className="text-sm text-red-500">{form.formState.errors.category.message}</p>
-                )}
-              </div>
-              <div>
-                <label className="text-sm font-medium">Location</label>
-                <Input {...form.register("location")} placeholder="City, State/Country" />
-                {form.formState.errors.location && (
-                  <p className="text-sm text-red-500">{form.formState.errors.location.message}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Slug</label>
-                <Input {...form.register("slug")} placeholder="url-friendly-slug" />
-                {form.formState.errors.slug && (
-                  <p className="text-sm text-red-500">{form.formState.errors.slug.message}</p>
-                )}
-              </div>
-              <div>
-                <label className="text-sm font-medium">Status</label>
-                <Select onValueChange={(value) => form.setValue("status", value as ListingStatus)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                  </SelectContent>
-                </Select>
-                {form.formState.errors.status && (
-                  <p className="text-sm text-red-500">{form.formState.errors.status.message}</p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Meta Description</label>
-              <Input {...form.register("metaDescription")} placeholder="SEO description (optional)" />
-              {form.formState.errors.metaDescription && (
-                <p className="text-sm text-red-500">{form.formState.errors.metaDescription.message}</p>
-              )}
-            </div>
-          </div>
-        )}
+        {(form) => <ListingTypeForm />}
       </DrawerForm>
 
       {/* Edit Listing Form */}
@@ -353,101 +263,7 @@ export default function ListingsPage() {
           onSubmit={handleUpdate}
           isLoading={updateMutation.isPending}
         >
-          {(form) => (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Title</label>
-                  <Input {...form.register("title")} placeholder="Listing title" />
-                  {form.formState.errors.title && (
-                    <p className="text-sm text-red-500">{form.formState.errors.title.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Type</label>
-                  <Select onValueChange={(value) => form.setValue("type", value as ListingType)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="restaurant">Restaurant</SelectItem>
-                      <SelectItem value="retreat">Retreat</SelectItem>
-                      <SelectItem value="event">Event</SelectItem>
-                      <SelectItem value="activity">Activity</SelectItem>
-                      <SelectItem value="property">Property</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {form.formState.errors.type && (
-                    <p className="text-sm text-red-500">{form.formState.errors.type.message}</p>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Description</label>
-                <textarea
-                  {...form.register("description")}
-                  className="w-full p-2 border rounded-md"
-                  rows={4}
-                  placeholder="Describe your listing..."
-                />
-                {form.formState.errors.description && (
-                  <p className="text-sm text-red-500">{form.formState.errors.description.message}</p>
-                )}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Category</label>
-                  <Input {...form.register("category")} placeholder="e.g., Wellness, Culinary" />
-                  {form.formState.errors.category && (
-                    <p className="text-sm text-red-500">{form.formState.errors.category.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Location</label>
-                  <Input {...form.register("location")} placeholder="City, State/Country" />
-                  {form.formState.errors.location && (
-                    <p className="text-sm text-red-500">{form.formState.errors.location.message}</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Slug</label>
-                  <Input {...form.register("slug")} placeholder="url-friendly-slug" />
-                  {form.formState.errors.slug && (
-                    <p className="text-sm text-red-500">{form.formState.errors.slug.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Status</label>
-                  <Select onValueChange={(value) => form.setValue("status", value as ListingStatus)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="published">Published</SelectItem>
-                      <SelectItem value="archived">Archived</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {form.formState.errors.status && (
-                    <p className="text-sm text-red-500">{form.formState.errors.status.message}</p>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Meta Description</label>
-                <Input {...form.register("metaDescription")} placeholder="SEO description (optional)" />
-                {form.formState.errors.metaDescription && (
-                  <p className="text-sm text-red-500">{form.formState.errors.metaDescription.message}</p>
-                )}
-              </div>
-            </div>
-          )}
+          {(form) => <ListingTypeForm />}
         </DrawerForm>
       )}
     </div>

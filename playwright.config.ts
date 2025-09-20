@@ -11,7 +11,7 @@ export default defineConfig({
     ['html', { outputFolder: 'playwright-report', open: 'never' }]
   ],
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.BASE_URL || 'http://localhost:4000',
     trace: 'on-first-retry',
     video: 'on',
     screenshot: 'only-on-failure',
@@ -51,7 +51,7 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
+  webServer: process.env.BASE_URL?.includes('4000') ? undefined : {
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,

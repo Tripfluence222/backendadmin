@@ -16,7 +16,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="lg:pl-64">
         <Topbar onMenuClick={() => setSidebarOpen(true)} />
-        <main className="p-4 lg:p-6">
+        <main className="px-4 lg:px-8 py-6 max-w-full">
           {children}
         </main>
       </div>

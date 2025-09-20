@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Filter, Download, User, Mail, Phone, Star, Calendar, DollarSign } from "lucide-react";
+import { Plus, Filter, Download, User, Star, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -19,7 +18,7 @@ import {
 import { DataTable } from "@/components/ui/data-table";
 import { DrawerForm } from "@/components/forms/drawer-form";
 import { customersApi, Customer } from "@/lib/api/customers";
-import { createCustomerSchema, updateCustomerSchema, addCustomerNoteSchema, updateCustomerPreferencesSchema } from "@/lib/validation/customers";
+import { createCustomerSchema, updateCustomerSchema, addCustomerNoteSchema, updateCustomerPreferencesSchema, CreateCustomerInput, UpdateCustomerInput, AddCustomerNoteInput, UpdateCustomerPreferencesInput } from "@/lib/lib/validation/customers";
 import { columns } from "./columns";
 import { CustomerProfileModal } from "./customer-profile-modal";
 
@@ -53,7 +52,7 @@ export default function CustomersPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => customersApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateCustomerInput }) => customersApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
       toast.success("Customer updated successfully");
@@ -76,7 +75,7 @@ export default function CustomersPage() {
   });
 
   const addNoteMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => customersApi.addNote(id, data),
+    mutationFn: ({ id, data }: { id: string; data: AddCustomerNoteInput }) => customersApi.addNote(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
       toast.success("Note added successfully");
@@ -87,7 +86,7 @@ export default function CustomersPage() {
   });
 
   const updatePreferencesMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => customersApi.updatePreferences(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateCustomerPreferencesInput }) => customersApi.updatePreferences(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
       toast.success("Preferences updated successfully");
@@ -128,11 +127,11 @@ export default function CustomersPage() {
     return matchesSearch && matchesStatus && matchesTags;
   });
 
-  const handleCreate = (data: any) => {
+  const handleCreate = (data: CreateCustomerInput) => {
     createMutation.mutate(data);
   };
 
-  const handleUpdate = (data: any) => {
+  const handleUpdate = (data: UpdateCustomerInput) => {
     if (editingCustomer) {
       updateMutation.mutate({ id: editingCustomer.id, data });
     }
@@ -148,11 +147,11 @@ export default function CustomersPage() {
     setSelectedCustomer(customer);
   };
 
-  const handleAddNote = (customerId: string, data: any) => {
+  const handleAddNote = (customerId: string, data: AddCustomerNoteInput) => {
     addNoteMutation.mutate({ id: customerId, data });
   };
 
-  const handleUpdatePreferences = (customerId: string, data: any) => {
+  const handleUpdatePreferences = (customerId: string, data: UpdateCustomerPreferencesInput) => {
     updatePreferencesMutation.mutate({ id: customerId, data });
   };
 

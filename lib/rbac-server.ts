@@ -103,3 +103,10 @@ export async function hasPermission(
     return false;
   }
 }
+
+// Export a default object for backward compatibility
+export const rbacServer = {
+  checkRBAC,
+  getUserRole,
+  hasPermission,
+};

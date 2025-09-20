@@ -174,7 +174,7 @@ export class FacebookProvider {
     pageId: string,
     post: FacebookPost
   ): Promise<{ id: string; url: string }> {
-    let endpoint = `/${pageId}/feed`;
+    const endpoint = `/${pageId}/feed`;
     let body: any = {
       message: post.message,
       access_token: pageAccessToken,

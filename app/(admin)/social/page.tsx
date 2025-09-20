@@ -323,7 +323,7 @@ export default function SocialPage() {
               return (
                 <div
                   key={day.toISOString()}
-                  className={`min-h-[100px] p-2 border border-border ${
+                  className={`min-h-[100px] p-2 border ${
                     isCurrentMonth ? 'bg-background' : 'bg-muted/50'
                   } ${isToday ? 'ring-2 ring-primary' : ''}`}
                 >

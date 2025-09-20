@@ -1,0 +1,371 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [active]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - navigation [ref=e7]:
+            - button "previous" [disabled] [ref=e8]:
+              - img "previous" [ref=e9]
+            - generic [ref=e11]:
+              - generic [ref=e12]: 1/
+              - generic [ref=e13]: "1"
+            - button "next" [disabled] [ref=e14]:
+              - img "next" [ref=e15]
+          - img
+        - generic [ref=e17]:
+          - link "Next.js 15.5.2 (stale) Turbopack" [ref=e18] [cursor=pointer]:
+            - /url: https://nextjs.org/docs/messages/version-staleness
+            - img [ref=e19] [cursor=pointer]
+            - generic "There is a newer version (15.5.3) available, upgrade recommended!" [ref=e21] [cursor=pointer]: Next.js 15.5.2 (stale)
+            - generic [ref=e22] [cursor=pointer]: Turbopack
+          - img
+      - dialog "Build Error" [ref=e24]:
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - generic [ref=e29]:
+              - generic [ref=e31]: Build Error
+              - generic [ref=e32]:
+                - button "Copy Error Info" [ref=e33] [cursor=pointer]:
+                  - img [ref=e34] [cursor=pointer]
+                - link "Go to related documentation" [ref=e36] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/messages/module-not-found
+                  - img [ref=e37] [cursor=pointer]
+                - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e39] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+                  - img [ref=e40] [cursor=pointer]
+            - paragraph [ref=e49]: "Module not found: Can't resolve '@dnd-kit/core'"
+          - generic [ref=e51]:
+            - generic [ref=e53]:
+              - img [ref=e55]
+              - generic [ref=e58]: ./components/uploader/ImageUploader.tsx (5:1)
+              - button "Open in editor" [ref=e59] [cursor=pointer]:
+                - img [ref=e61] [cursor=pointer]
+            - generic [ref=e64]:
+              - generic [ref=e65]: "Module not found: Can't resolve '@dnd-kit/core'"
+              - generic [ref=e67]: 3 |
+              - generic [ref=e69]: import
+              - generic [ref=e70]: "{ useState"
+              - generic [ref=e71]: ","
+              - generic [ref=e72]: "useCallback }"
+              - generic [ref=e73]: from
+              - generic [ref=e75]: "'react'"
+              - generic [ref=e76]: ;
+              - generic [ref=e78]: 4 |
+              - generic [ref=e80]: import
+              - generic [ref=e81]: "{ useDropzone }"
+              - generic [ref=e82]: from
+              - generic [ref=e84]: "'react-dropzone'"
+              - generic [ref=e85]: ;
+              - generic [ref=e86]: ">"
+              - generic [ref=e87]: 5 |
+              - generic [ref=e89]: import
+              - generic [ref=e90]: "{"
+              - generic [ref=e91]: DndContext
+              - generic [ref=e92]: ","
+              - generic [ref=e93]: closestCenter
+              - generic [ref=e94]: ","
+              - generic [ref=e96]: KeyboardSensor
+              - generic [ref=e97]: ","
+              - generic [ref=e99]: PointerSensor
+              - generic [ref=e100]: ","
+              - generic [ref=e101]: useSensor
+              - generic [ref=e102]: ","
+              - generic [ref=e103]: "useSensors }"
+              - generic [ref=e104]: from
+              - generic [ref=e106]: "'@dnd-kit/core'"
+              - generic [ref=e107]: ;
+              - generic [ref=e109]: "|"
+              - generic [ref=e111]: ^
+              - generic [ref=e112]: ^
+              - generic [ref=e113]: ^
+              - generic [ref=e114]: ^
+              - generic [ref=e115]: ^
+              - generic [ref=e116]: ^
+              - generic [ref=e117]: ^
+              - generic [ref=e118]: ^
+              - generic [ref=e119]: ^
+              - generic [ref=e120]: ^
+              - generic [ref=e121]: ^
+              - generic [ref=e122]: ^
+              - generic [ref=e123]: ^
+              - generic [ref=e124]: ^
+              - generic [ref=e125]: ^
+              - generic [ref=e126]: ^
+              - generic [ref=e127]: ^
+              - generic [ref=e128]: ^
+              - generic [ref=e129]: ^
+              - generic [ref=e130]: ^
+              - generic [ref=e131]: ^
+              - generic [ref=e132]: ^
+              - generic [ref=e133]: ^
+              - generic [ref=e134]: ^
+              - generic [ref=e135]: ^
+              - generic [ref=e136]: ^
+              - generic [ref=e137]: ^
+              - generic [ref=e138]: ^
+              - generic [ref=e139]: ^
+              - generic [ref=e140]: ^
+              - generic [ref=e141]: ^
+              - generic [ref=e142]: ^
+              - generic [ref=e143]: ^
+              - generic [ref=e144]: ^
+              - generic [ref=e145]: ^
+              - generic [ref=e146]: ^
+              - generic [ref=e147]: ^
+              - generic [ref=e148]: ^
+              - generic [ref=e149]: ^
+              - generic [ref=e150]: ^
+              - generic [ref=e151]: ^
+              - generic [ref=e152]: ^
+              - generic [ref=e153]: ^
+              - generic [ref=e154]: ^
+              - generic [ref=e155]: ^
+              - generic [ref=e156]: ^
+              - generic [ref=e157]: ^
+              - generic [ref=e158]: ^
+              - generic [ref=e159]: ^
+              - generic [ref=e160]: ^
+              - generic [ref=e161]: ^
+              - generic [ref=e162]: ^
+              - generic [ref=e163]: ^
+              - generic [ref=e164]: ^
+              - generic [ref=e165]: ^
+              - generic [ref=e166]: ^
+              - generic [ref=e167]: ^
+              - generic [ref=e168]: ^
+              - generic [ref=e169]: ^
+              - generic [ref=e170]: ^
+              - generic [ref=e171]: ^
+              - generic [ref=e172]: ^
+              - generic [ref=e173]: ^
+              - generic [ref=e174]: ^
+              - generic [ref=e175]: ^
+              - generic [ref=e176]: ^
+              - generic [ref=e177]: ^
+              - generic [ref=e178]: ^
+              - generic [ref=e179]: ^
+              - generic [ref=e180]: ^
+              - generic [ref=e181]: ^
+              - generic [ref=e182]: ^
+              - generic [ref=e183]: ^
+              - generic [ref=e184]: ^
+              - generic [ref=e185]: ^
+              - generic [ref=e186]: ^
+              - generic [ref=e187]: ^
+              - generic [ref=e188]: ^
+              - generic [ref=e189]: ^
+              - generic [ref=e190]: ^
+              - generic [ref=e191]: ^
+              - generic [ref=e192]: ^
+              - generic [ref=e193]: ^
+              - generic [ref=e194]: ^
+              - generic [ref=e195]: ^
+              - generic [ref=e196]: ^
+              - generic [ref=e197]: ^
+              - generic [ref=e198]: ^
+              - generic [ref=e199]: ^
+              - generic [ref=e200]: ^
+              - generic [ref=e201]: ^
+              - generic [ref=e202]: ^
+              - generic [ref=e203]: ^
+              - generic [ref=e204]: ^
+              - generic [ref=e205]: ^
+              - generic [ref=e206]: ^
+              - generic [ref=e207]: ^
+              - generic [ref=e208]: ^
+              - generic [ref=e209]: ^
+              - generic [ref=e210]: ^
+              - generic [ref=e211]: ^
+              - generic [ref=e212]: ^
+              - generic [ref=e213]: ^
+              - generic [ref=e214]: ^
+              - generic [ref=e215]: ^
+              - generic [ref=e216]: ^
+              - generic [ref=e217]: ^
+              - generic [ref=e218]: ^
+              - generic [ref=e219]: ^
+              - generic [ref=e220]: ^
+              - generic [ref=e221]: ^
+              - generic [ref=e222]: ^
+              - generic [ref=e224]: 6 |
+              - generic [ref=e226]: import
+              - generic [ref=e227]: "{ arrayMove"
+              - generic [ref=e228]: ","
+              - generic [ref=e230]: SortableContext
+              - generic [ref=e231]: ","
+              - generic [ref=e232]: sortableKeyboardCoordinates
+              - generic [ref=e233]: ","
+              - generic [ref=e234]: "verticalListSortingStrategy }"
+              - generic [ref=e235]: from
+              - generic [ref=e237]: "'@dnd-kit/sortable'"
+              - generic [ref=e238]: ;
+              - generic [ref=e240]: 7 |
+              - generic [ref=e242]: import
+              - generic [ref=e243]: "{ useSortable }"
+              - generic [ref=e244]: from
+              - generic [ref=e246]: "'@dnd-kit/sortable'"
+              - generic [ref=e247]: ;
+              - generic [ref=e249]: 8 |
+              - generic [ref=e251]: import
+              - generic [ref=e252]: "{"
+              - generic [ref=e253]: CSS
+              - generic [ref=e254]: "}"
+              - generic [ref=e255]: from
+              - generic [ref=e257]: "'@dnd-kit/utilities'"
+              - generic [ref=e258]: ;
+              - generic [ref=e259]:
+                - text: "Import traces: Client Component Browser: ./components/uploader/ImageUploader.tsx [Client Component Browser] ./app/(admin)/listings/components/ListingTypeForm.tsx [Client Component Browser] ./app/(admin)/listings/page.tsx [Client Component Browser] ./app/(admin)/listings/page.tsx [Server Component] Client Component SSR: ./components/uploader/ImageUploader.tsx [Client Component SSR] ./app/(admin)/listings/components/ListingTypeForm.tsx [Client Component SSR] ./app/(admin)/listings/page.tsx [Client Component SSR] ./app/(admin)/listings/page.tsx [Server Component]"
+                - link "https://nextjs.org/docs/messages/module-not-found" [ref=e260] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/messages/module-not-found
+        - generic [ref=e261]:
+          - generic [ref=e262]: "1"
+          - generic [ref=e263]: "2"
+    - generic [ref=e268] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e269] [cursor=pointer]:
+        - img [ref=e270] [cursor=pointer]
+      - button "Open issues overlay" [ref=e274] [cursor=pointer]:
+        - generic [ref=e275] [cursor=pointer]:
+          - generic [ref=e276] [cursor=pointer]: "0"
+          - generic [ref=e277] [cursor=pointer]: "1"
+        - generic [ref=e278] [cursor=pointer]: Issue
+  - alert [ref=e279]
+  - generic [ref=e280]:
+    - generic [ref=e282]:
+      - generic [ref=e284]:
+        - generic [ref=e286]: T
+        - generic [ref=e287]: Tripfluence
+      - navigation [ref=e288]:
+        - link "Dashboard" [ref=e289] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e290] [cursor=pointer]
+          - generic [ref=e295] [cursor=pointer]: Dashboard
+        - link "Listings" [ref=e296] [cursor=pointer]:
+          - /url: /listings
+          - img [ref=e297] [cursor=pointer]
+          - generic [ref=e298] [cursor=pointer]: Listings
+        - link "Spaces" [ref=e299] [cursor=pointer]:
+          - /url: /spaces
+          - img [ref=e300] [cursor=pointer]
+          - generic [ref=e304] [cursor=pointer]: Spaces
+        - link "Space Requests" [ref=e305] [cursor=pointer]:
+          - /url: /space-requests
+          - img [ref=e306] [cursor=pointer]
+          - generic [ref=e308] [cursor=pointer]: Space Requests
+        - link "Space Pricing" [ref=e309] [cursor=pointer]:
+          - /url: /space-pricing
+          - img [ref=e310] [cursor=pointer]
+          - generic [ref=e312] [cursor=pointer]: Space Pricing
+        - link "Availability" [ref=e313] [cursor=pointer]:
+          - /url: /availability
+          - img [ref=e314] [cursor=pointer]
+          - generic [ref=e316] [cursor=pointer]: Availability
+        - link "Orders 3" [ref=e317] [cursor=pointer]:
+          - /url: /orders
+          - img [ref=e318] [cursor=pointer]
+          - generic [ref=e322] [cursor=pointer]: Orders
+          - generic [ref=e323] [cursor=pointer]: "3"
+        - link "Customers" [ref=e324] [cursor=pointer]:
+          - /url: /customers
+          - img [ref=e325] [cursor=pointer]
+          - generic [ref=e330] [cursor=pointer]: Customers
+        - link "Reviews" [ref=e331] [cursor=pointer]:
+          - /url: /reviews
+          - img [ref=e332] [cursor=pointer]
+          - generic [ref=e334] [cursor=pointer]: Reviews
+        - link "Widgets" [ref=e335] [cursor=pointer]:
+          - /url: /widgets
+          - img [ref=e336] [cursor=pointer]
+          - generic [ref=e338] [cursor=pointer]: Widgets
+        - link "Social" [ref=e339] [cursor=pointer]:
+          - /url: /social
+          - img [ref=e340] [cursor=pointer]
+          - generic [ref=e346] [cursor=pointer]: Social
+        - link "Event Sync" [ref=e347] [cursor=pointer]:
+          - /url: /event-sync
+          - img [ref=e348] [cursor=pointer]
+          - generic [ref=e350] [cursor=pointer]: Event Sync
+        - link "Integrations" [ref=e351] [cursor=pointer]:
+          - /url: /integrations
+          - img [ref=e352] [cursor=pointer]
+          - generic [ref=e354] [cursor=pointer]: Integrations
+        - link "Marketing" [ref=e355] [cursor=pointer]:
+          - /url: /marketing
+          - img [ref=e356] [cursor=pointer]
+          - generic [ref=e359] [cursor=pointer]: Marketing
+        - link "Reports" [ref=e360] [cursor=pointer]:
+          - /url: /reports
+          - img [ref=e361] [cursor=pointer]
+          - generic [ref=e363] [cursor=pointer]: Reports
+        - link "Settings" [ref=e364] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e365] [cursor=pointer]
+          - generic [ref=e368] [cursor=pointer]: Settings
+      - generic [ref=e370]:
+        - generic [ref=e372]: AD
+        - generic [ref=e373]:
+          - paragraph [ref=e374]: Admin User
+          - paragraph [ref=e375]: admin@tripfluence.com
+    - generic [ref=e376]:
+      - banner [ref=e377]:
+        - generic [ref=e379]:
+          - img [ref=e380]
+          - searchbox "Search..." [ref=e383]
+        - generic [ref=e384]:
+          - button "Toggle theme" [ref=e385]:
+            - img [ref=e386]
+            - generic [ref=e392]: Toggle theme
+          - button "5 Notifications" [ref=e393]:
+            - img [ref=e394]
+            - generic [ref=e397]: "5"
+            - generic [ref=e398]: Notifications
+          - button "AD" [ref=e399]:
+            - generic [ref=e401]: AD
+      - main [ref=e402]:
+        - generic [ref=e403]:
+          - generic [ref=e404]:
+            - generic [ref=e405]:
+              - heading "Space Management" [level=1] [ref=e406]
+              - paragraph [ref=e407]: Manage your rental spaces, pricing, and availability
+            - button "Create Space" [ref=e408]:
+              - img [ref=e409]
+              - text: Create Space
+          - generic [ref=e410]:
+            - generic [ref=e411]:
+              - img [ref=e412]
+              - generic [ref=e414]: "Filters:"
+            - textbox "Search spaces..." [ref=e415]
+            - combobox [ref=e416]:
+              - generic: All Status
+              - img
+            - textbox "City..." [ref=e417]
+          - generic [ref=e418]:
+            - generic [ref=e419]:
+              - heading "Spaces" [level=3] [ref=e420]
+              - paragraph [ref=e421]: Manage your rental spaces and their settings
+            - generic [ref=e423]:
+              - button "Columns" [ref=e425]:
+                - text: Columns
+                - img [ref=e426]
+              - table [ref=e430]:
+                - rowgroup [ref=e431]:
+                  - row "Space Status Capacity Pricing Requests Created Actions" [ref=e432]:
+                    - cell "Space" [ref=e433]
+                    - cell "Status" [ref=e434]
+                    - cell "Capacity" [ref=e435]
+                    - cell "Pricing" [ref=e436]
+                    - cell "Requests" [ref=e437]
+                    - cell "Created" [ref=e438]
+                    - cell "Actions" [ref=e439]
+                - rowgroup [ref=e440]:
+                  - row "No results." [ref=e441]:
+                    - cell "No results." [ref=e442]
+              - generic [ref=e443]:
+                - generic [ref=e444]: 0 of 0 row(s) selected.
+                - generic [ref=e445]:
+                  - button "Previous" [disabled]
+                  - button "Next" [disabled]
+  - region "Notifications alt+T"
+```

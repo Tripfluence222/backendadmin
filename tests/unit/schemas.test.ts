@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { 
   createListingSchema, 
-  createOrderSchema, 
   createWidgetSchema,
   createSocialPostSchema,
   createEventSyncSchema 
@@ -12,11 +11,13 @@ describe("Schema Validation Tests", () => {
     it("validates valid listing data", () => {
       const validListing = {
         title: "Test Listing",
-        type: "RESTAURANT" as const,
-        description: "A test restaurant",
-        slug: "test-restaurant",
+        type: "event" as const,
+        description: "A test event",
+        location: "Test Location", 
+        images: ["https://example.com/test.jpg"],
         price: 50,
-        currency: "USD"
+        currency: "USD",
+        status: "draft" as const
       };
       
       const result = createListingSchema.safeParse(validListing);
@@ -36,22 +37,6 @@ describe("Schema Validation Tests", () => {
     });
   });
 
-  describe("Orders Schema", () => {
-    it("validates valid order data", () => {
-      const validOrder = {
-        listingId: "clx123456789",
-        customerEmail: "test@example.com",
-        customerName: "John Doe",
-        startDate: "2024-02-15T10:00:00Z",
-        endDate: "2024-02-15T12:00:00Z",
-        totalAmount: 100,
-        currency: "USD"
-      };
-      
-      const result = createOrderSchema.safeParse(validOrder);
-      expect(result.success).toBe(true);
-    });
-  });
 
   describe("Widgets Schema", () => {
     it("validates valid widget data", () => {

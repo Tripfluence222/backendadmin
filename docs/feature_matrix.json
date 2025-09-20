@@ -1,0 +1,538 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-09-20",
+  "features": {
+    "home": {
+      "route": "/",
+      "status": "functional",
+      "components": {
+        "hero_section": {
+          "required": true,
+          "status": "implemented",
+          "props": ["title", "subtitle", "cta_button"]
+        },
+        "features_grid": {
+          "required": true,
+          "status": "implemented",
+          "props": ["features_list"]
+        },
+        "search_bar": {
+          "required": true,
+          "status": "implemented",
+          "props": ["placeholder", "onSearch"]
+        },
+        "footer": {
+          "required": true,
+          "status": "needs_review",
+          "issues": ["potential_duplicates"]
+        }
+      },
+      "acceptance_criteria": [
+        "Hero section displays with clear value proposition",
+        "Search functionality works and redirects to /search",
+        "Footer contains all required links",
+        "Page loads without console errors",
+        "Responsive design works on mobile/tablet/desktop"
+      ]
+    },
+    "community": {
+      "route": "/community",
+      "status": "missing",
+      "components": {
+        "social_wall": {
+          "required": true,
+          "status": "not_implemented"
+        },
+        "user_profiles": {
+          "required": true,
+          "status": "not_implemented"
+        },
+        "activity_feed": {
+          "required": true,
+          "status": "not_implemented"
+        }
+      },
+      "acceptance_criteria": [
+        "Social wall displays user posts",
+        "Like/comment/share functionality works",
+        "User profiles show archetype and badges",
+        "Activity feed shows recent community actions"
+      ]
+    },
+    "events": {
+      "route": "/events",
+      "status": "missing_public_route",
+      "admin_route": "/listings?type=event",
+      "components": {
+        "event_list": {
+          "required": true,
+          "status": "admin_only",
+          "props": ["events", "filters", "pagination"]
+        },
+        "event_detail": {
+          "required": true,
+          "status": "missing_public",
+          "required_fields": [
+            "title",
+            "description",
+            "location",
+            "start_date",
+            "end_date",
+            "price",
+            "capacity",
+            "organizer",
+            "category",
+            "images"
+          ]
+        },
+        "event_form": {
+          "required": true,
+          "status": "implemented",
+          "location": "/app/(admin)/listings/components/ListingTypeForm.tsx"
+        },
+        "booking_button": {
+          "required": true,
+          "status": "needs_implementation"
+        }
+      },
+      "acceptance_criteria": [
+        "Events display with all required fields",
+        "Date/time formatting is consistent",
+        "Location shows map integration",
+        "Booking button triggers reservation flow",
+        "Images display properly with alt text",
+        "Category filtering works",
+        "Price displays with currency"
+      ]
+    },
+    "retreats": {
+      "route": "/retreats",
+      "status": "missing_public_route",
+      "admin_route": "/listings?type=retreat",
+      "components": {
+        "retreat_list": {
+          "required": true,
+          "status": "admin_only"
+        },
+        "retreat_detail": {
+          "required": true,
+          "status": "missing_public",
+          "required_fields": [
+            "title",
+            "description",
+            "location",
+            "start_date",
+            "end_date",
+            "duration_days",
+            "capacity",
+            "price_per_person",
+            "inclusions",
+            "difficulty_level",
+            "instructor",
+            "images"
+          ]
+        },
+        "retreat_form": {
+          "required": true,
+          "status": "implemented"
+        }
+      },
+      "acceptance_criteria": [
+        "Retreats show date ranges clearly",
+        "Capacity and availability are displayed",
+        "Inclusions list is comprehensive",
+        "Difficulty level is clearly marked",
+        "Instructor information is displayed",
+        "Multi-day pricing is calculated correctly"
+      ]
+    },
+    "activities": {
+      "route": "/activities",
+      "status": "missing_public_route",
+      "admin_route": "/listings?type=activity",
+      "components": {
+        "activity_list": {
+          "required": true,
+          "status": "admin_only"
+        },
+        "activity_detail": {
+          "required": true,
+          "status": "missing_public",
+          "required_fields": [
+            "title",
+            "description",
+            "location",
+            "duration_hours",
+            "difficulty_level",
+            "equipment_provided",
+            "min_age",
+            "max_participants",
+            "price",
+            "instructor",
+            "safety_notes",
+            "images"
+          ]
+        },
+        "activity_form": {
+          "required": true,
+          "status": "implemented"
+        }
+      },
+      "acceptance_criteria": [
+        "Duration is clearly displayed",
+        "Difficulty level uses consistent scale",
+        "Equipment requirements are listed",
+        "Age restrictions are clearly stated",
+        "Safety information is prominent",
+        "Instructor qualifications shown"
+      ]
+    },
+    "challenges": {
+      "route": "/challenges",
+      "status": "missing",
+      "components": {
+        "challenge_list": {
+          "required": true,
+          "status": "not_implemented"
+        },
+        "challenge_detail": {
+          "required": true,
+          "status": "not_implemented"
+        },
+        "leaderboard": {
+          "required": true,
+          "status": "not_implemented"
+        },
+        "progress_tracking": {
+          "required": true,
+          "status": "not_implemented"
+        }
+      },
+      "acceptance_criteria": [
+        "Challenge list shows active and upcoming challenges",
+        "Progress tracking works for logged-in users",
+        "Leaderboard updates in real-time",
+        "Challenge completion triggers rewards"
+      ]
+    },
+    "coworking": {
+      "route": "/coworking",
+      "status": "implemented_as_spaces",
+      "public_route": "/venues?type=coworking",
+      "admin_route": "/spaces",
+      "components": {
+        "space_list": {
+          "required": true,
+          "status": "implemented",
+          "location": "/app/(public)/venues/page.tsx"
+        },
+        "space_detail": {
+          "required": true,
+          "status": "implemented",
+          "required_fields": [
+            "name",
+            "description",
+            "address",
+            "operating_hours",
+            "hourly_rate",
+            "day_pass_rate",
+            "monthly_rate",
+            "amenities",
+            "capacity",
+            "wifi_speed",
+            "meeting_rooms",
+            "parking",
+            "accessibility",
+            "images"
+          ]
+        },
+        "booking_calendar": {
+          "required": true,
+          "status": "implemented",
+          "location": "/app/(admin)/availability/page.tsx"
+        },
+        "amenities_list": {
+          "required": true,
+          "status": "implemented"
+        }
+      },
+      "acceptance_criteria": [
+        "Operating hours are clearly displayed",
+        "Multiple pricing options (hourly/daily/monthly)",
+        "Amenities are categorized and filterable",
+        "Real-time availability checking",
+        "WiFi speed is displayed prominently",
+        "Accessibility information is complete"
+      ]
+    },
+    "restaurants": {
+      "route": "/restaurants",
+      "status": "missing_public_route",
+      "admin_route": "/listings?type=restaurant",
+      "components": {
+        "restaurant_list": {
+          "required": true,
+          "status": "admin_only"
+        },
+        "restaurant_detail": {
+          "required": true,
+          "status": "missing_public",
+          "required_fields": [
+            "name",
+            "description",
+            "cuisine_type",
+            "price_range",
+            "address",
+            "operating_hours",
+            "phone",
+            "website",
+            "menu_highlights",
+            "dietary_options",
+            "reservations_required",
+            "capacity",
+            "ambiance",
+            "parking",
+            "images"
+          ]
+        },
+        "restaurant_form": {
+          "required": true,
+          "status": "implemented"
+        }
+      },
+      "acceptance_criteria": [
+        "Cuisine type filtering works",
+        "Price range uses consistent symbols ($, $$, $$$)",
+        "Operating hours are current and accurate",
+        "Dietary options are clearly marked",
+        "Menu highlights showcase signature dishes",
+        "Reservation system integrates properly"
+      ]
+    },
+    "booking_flights": {
+      "route": "/booking/flights",
+      "status": "missing",
+      "components": {
+        "flight_search": {
+          "required": true,
+          "status": "not_implemented"
+        },
+        "flight_results": {
+          "required": true,
+          "status": "not_implemented"
+        },
+        "booking_flow": {
+          "required": true,
+          "status": "not_implemented"
+        }
+      },
+      "acceptance_criteria": [
+        "Flight search works with major providers",
+        "Results show price comparison",
+        "Booking flow is secure and reliable",
+        "Integration with travel APIs"
+      ]
+    },
+    "booking_hotels": {
+      "route": "/booking/hotels",
+      "status": "missing",
+      "components": {
+        "hotel_search": {
+          "required": true,
+          "status": "not_implemented"
+        },
+        "hotel_results": {
+          "required": true,
+          "status": "not_implemented"
+        },
+        "booking_flow": {
+          "required": true,
+          "status": "not_implemented"
+        }
+      },
+      "acceptance_criteria": [
+        "Hotel search by location and dates",
+        "Room availability checking",
+        "Secure booking and payment",
+        "Integration with hotel booking APIs"
+      ]
+    },
+    "rewards_badges": {
+      "route": "/rewards",
+      "status": "missing_public_route",
+      "admin_route": "/marketing?tab=loyalty",
+      "components": {
+        "rewards_dashboard": {
+          "required": true,
+          "status": "missing"
+        },
+        "badge_collection": {
+          "required": true,
+          "status": "missing"
+        },
+        "points_tracker": {
+          "required": true,
+          "status": "missing"
+        },
+        "referral_system": {
+          "required": true,
+          "status": "admin_only"
+        }
+      },
+      "acceptance_criteria": [
+        "Users can view earned badges",
+        "Points balance is always current",
+        "Reward redemption process works",
+        "Referral tracking functions properly"
+      ]
+    },
+    "profile": {
+      "route": "/profile",
+      "status": "missing_public_route",
+      "admin_route": "/customers",
+      "components": {
+        "profile_view": {
+          "required": true,
+          "status": "admin_only"
+        },
+        "profile_edit": {
+          "required": true,
+          "status": "admin_only"
+        },
+        "archetype_display": {
+          "required": true,
+          "status": "missing"
+        },
+        "booking_history": {
+          "required": true,
+          "status": "admin_only"
+        },
+        "preferences": {
+          "required": true,
+          "status": "implemented"
+        }
+      },
+      "acceptance_criteria": [
+        "User archetype is prominently displayed",
+        "Booking history is comprehensive",
+        "Profile editing works reliably",
+        "Preferences affect recommendations"
+      ]
+    },
+    "settings": {
+      "route": "/settings",
+      "status": "admin_only",
+      "admin_route": "/settings",
+      "components": {
+        "user_settings": {
+          "required": true,
+          "status": "implemented"
+        },
+        "api_key_management": {
+          "required": true,
+          "status": "implemented"
+        },
+        "webhook_config": {
+          "required": true,
+          "status": "implemented"
+        },
+        "notification_preferences": {
+          "required": true,
+          "status": "needs_implementation"
+        }
+      },
+      "acceptance_criteria": [
+        "Settings save reliably",
+        "API key generation works",
+        "Webhook testing functions",
+        "Notification preferences are respected"
+      ]
+    },
+    "admin_dashboard": {
+      "route": "/dashboard",
+      "status": "functional",
+      "components": {
+        "metrics_cards": {
+          "required": true,
+          "status": "implemented",
+          "props": ["totalRevenue", "totalBookings", "totalCustomers", "socialReach"]
+        },
+        "recent_orders": {
+          "required": true,
+          "status": "implemented_with_fallback"
+        },
+        "top_listings": {
+          "required": true,
+          "status": "implemented_with_fallback"
+        },
+        "quick_actions": {
+          "required": true,
+          "status": "implemented"
+        }
+      },
+      "acceptance_criteria": [
+        "Metrics display current data",
+        "Charts and graphs render properly",
+        "Quick actions navigate correctly",
+        "Dashboard loads without errors",
+        "Real-time updates work"
+      ]
+    }
+  },
+  "navigation": {
+    "header_nav": {
+      "required": true,
+      "status": "needs_review",
+      "components": ["logo", "main_menu", "search", "user_menu"]
+    },
+    "footer_nav": {
+      "required": true,
+      "status": "needs_review",
+      "issues": ["potential_duplicates", "missing_links"]
+    },
+    "sidebar_nav": {
+      "required": true,
+      "status": "implemented",
+      "location": "/components/layout/sidebar.tsx"
+    },
+    "back_button": {
+      "required": true,
+      "status": "needs_review",
+      "issues": ["potential_duplicates"]
+    }
+  },
+  "image_upload": {
+    "required": true,
+    "status": "implemented",
+    "location": "/components/uploader/ImageUploader.tsx",
+    "api_endpoint": "/api/uploads"
+  },
+  "known_issues": [
+    "Next.js 15 params Promise handling in API routes",
+    "TypeScript errors in provider implementations", 
+    "Missing node-mocks-http dependency for tests",
+    "Element type invalid errors in Event components",
+    "Navigation consistency issues",
+    "Missing public routes for core features"
+  ],
+  "testing": {
+    "unit_tests": {
+      "required": true,
+      "status": "partial",
+      "coverage": "30%"
+    },
+    "e2e_tests": {
+      "required": true,
+      "status": "implemented",
+      "coverage": "60%"
+    },
+    "accessibility_tests": {
+      "required": true,
+      "status": "implemented"
+    },
+    "performance_tests": {
+      "required": true,
+      "status": "implemented"
+    }
+  }
+}
