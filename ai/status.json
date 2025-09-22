@@ -1,0 +1,29 @@
+{
+  "active_task": "#Q-001 Add job src/jobs/runFromList.ts to read data/yoga_centers_bali.csv and enqueue sites",
+  "start_time": "2025-09-22T02:30:00Z",
+  "last_run": "2025-09-22T02:45:00Z",
+  "result": "SUCCESS",
+  "artifacts": [
+    "ai/artifacts/2025-09-22/q001-test-output.log"
+  ],
+  "notes": "Q-001 COMPLETED: Created CSV reader job that successfully processes 8 yoga centers from Bali CSV file. Job includes validation, error handling, and flexible processor interface. Ready for integration with actual queue system.",
+  "session_id": "q001-2025-09-22",
+  "queue_position": 1,
+  "target_files": [
+    "src/jobs/runFromList.ts",
+    "data/yoga_centers_bali.csv",
+    "package.json"
+  ],
+  "files_created": [
+    "ai/system.md",
+    "ai/runbook.md", 
+    "ai/queue.todo.md",
+    "ai/status.json",
+    "ai/decisions.md",
+    "data/yoga_centers_bali.csv",
+    "src/jobs/runFromList.ts"
+  ],
+  "packages_added": [
+    "csv-parse@6.1.0"
+  ]
+}

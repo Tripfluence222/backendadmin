@@ -1,0 +1,60 @@
+[INFO] Starting to process yoga centers from data/yoga_centers_bali.csv
+[INFO] Found 8 yoga centers to process
+[INFO] [CONSOLE] Would enqueue yoga center: {
+  name: 'Yoga Barn',
+  website: 'https://www.theyogabarn.com',
+  location: 'Ubud, Bali',
+  category: 'studio'
+}
+[INFO] Enqueued: Yoga Barn (https://www.theyogabarn.com)
+[INFO] [CONSOLE] Would enqueue yoga center: {
+  name: 'The Practice Bali',
+  website: 'https://www.thepracticebali.com',
+  location: 'Canggu, Bali',
+  category: 'studio'
+}
+[INFO] Enqueued: The Practice Bali (https://www.thepracticebali.com)
+[INFO] [CONSOLE] Would enqueue yoga center: {
+  name: 'Desa Seni',
+  website: 'https://www.desaseni.com',
+  location: 'Canggu, Bali',
+  category: 'retreat'
+}
+[INFO] Enqueued: Desa Seni (https://www.desaseni.com)
+[INFO] [CONSOLE] Would enqueue yoga center: {
+  name: 'Blooming Lotus Yoga',
+  website: 'https://bloominglotusyoga.com',
+  location: 'Ubud, Bali',
+  category: 'studio'
+}
+[INFO] Enqueued: Blooming Lotus Yoga (https://bloominglotusyoga.com)
+[INFO] [CONSOLE] Would enqueue yoga center: {
+  name: 'Serenity Yoga Lembongan',
+  website: 'https://www.serenityyogalembongan.com',
+  location: 'Nusa Lembongan, Bali',
+  category: 'retreat'
+}
+[INFO] Enqueued: Serenity Yoga Lembongan (https://www.serenityyogalembongan.com)
+[INFO] [CONSOLE] Would enqueue yoga center: {
+  name: 'Power of Now Oasis',
+  website: 'https://www.powerofnowoasis.com',
+  location: 'Sanur, Bali',
+  category: 'studio'
+}
+[INFO] Enqueued: Power of Now Oasis (https://www.powerofnowoasis.com)
+[INFO] [CONSOLE] Would enqueue yoga center: {
+  name: 'Bali Yoga School',
+  website: 'https://baliyogaschool.com',
+  location: 'Amed, Bali',
+  category: 'school'
+}
+[INFO] Enqueued: Bali Yoga School (https://baliyogaschool.com)
+[INFO] [CONSOLE] Would enqueue yoga center: {
+  name: 'Floating Leaf Eco-Luxury Retreat',
+  website: 'https://floatingleaf.com',
+  location: 'Sukawati, Bali',
+  category: 'retreat'
+}
+[INFO] Enqueued: Floating Leaf Eco-Luxury Retreat (https://floatingleaf.com)
+[INFO] Processing complete. Stats: { total: 8, enqueued: 8, errors: 0 }
+Yoga center processing completed: { total: 8, enqueued: 8, errors: 0 }
