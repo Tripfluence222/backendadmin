@@ -6,6 +6,9 @@ import {
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RecentOrders } from "@/components/dashboard/RecentOrders";
+import { TopListings } from "@/components/dashboard/TopListings";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 
 export default function DashboardPage() {
   // Mock metrics for now - these would come from API calls in a real app
@@ -81,51 +84,12 @@ export default function DashboardPage() {
 
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Orders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <p className="text-sm">No recent orders</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Listings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <p className="text-sm">No listings available</p>
-            </div>
-          </CardContent>
-        </Card>
+        <RecentOrders />
+        <TopListings />
       </div>
 
       {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="h-20 border border-border rounded-lg flex items-center justify-center">
-              <span className="text-sm">Add Event</span>
-            </div>
-            <div className="h-20 border border-border rounded-lg flex items-center justify-center">
-              <span className="text-sm">View Customers</span>
-            </div>
-            <div className="h-20 border border-border rounded-lg flex items-center justify-center">
-              <span className="text-sm">View Reports</span>
-            </div>
-            <div className="h-20 border border-border rounded-lg flex items-center justify-center">
-              <span className="text-sm">Social Media</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <QuickActions />
     </div>
   );
 }
