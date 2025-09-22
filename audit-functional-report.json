@@ -1,0 +1,135 @@
+{
+  "auditDate": "2024-01-22T12:00:00Z",
+  "environment": "development",
+  "baseUrl": "http://localhost:3005",
+  "totals": {
+    "passed": 4,
+    "failed": 3,
+    "total": 7
+  },
+  "byArea": {
+    "dashboard": {
+      "passed": 4,
+      "failed": 0,
+      "status": "✅ PASSING"
+    },
+    "navigation": {
+      "passed": 0,
+      "failed": 3,
+      "status": "❌ FAILING"
+    },
+    "listings": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "spaces": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "availability": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "orders": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "widgets": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "social": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "eventSync": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "marketing": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "reports": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "settings": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "rbac": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    },
+    "health": {
+      "passed": 0,
+      "failed": 0,
+      "status": "⏸️ NOT TESTED"
+    }
+  },
+  "failures": [
+    {
+      "spec": "dashboard-links.spec.ts",
+      "test": "quick actions navigate",
+      "message": "Quick action buttons not navigating to target pages",
+      "suggestion": "Check if target pages exist and API endpoints are working",
+      "file": "components/dashboard/QuickActions.tsx"
+    },
+    {
+      "spec": "dashboard-links.spec.ts", 
+      "test": "metric cards are clickable",
+      "message": "Page load timeout - networkidle state not reached",
+      "suggestion": "Check for infinite loading states or API call issues",
+      "file": "app/(admin)/dashboard/page.tsx"
+    },
+    {
+      "spec": "dashboard-links.spec.ts",
+      "test": "recent orders view all button works", 
+      "message": "Page load timeout - networkidle state not reached",
+      "suggestion": "Check for infinite loading states or API call issues",
+      "file": "app/(admin)/dashboard/page.tsx"
+    }
+  ],
+  "criticalIssues": [
+    {
+      "issue": "Database connection not available",
+      "impact": "All API-dependent features will fail",
+      "solution": "Set up PostgreSQL database and run migrations"
+    },
+    {
+      "issue": "Redis connection not configured", 
+      "impact": "Queue system and caching will not work",
+      "solution": "Configure Redis URL in environment variables"
+    },
+    {
+      "issue": "API endpoints returning errors",
+      "impact": "Data loading and form submissions will fail",
+      "solution": "Fix API route error handling and database queries"
+    }
+  ],
+  "recommendations": [
+    "Set up database and run migrations before running full audit",
+    "Configure Redis for queue system functionality", 
+    "Add proper error boundaries to handle API failures gracefully",
+    "Implement loading states for better UX during API calls",
+    "Add retry logic for failed API requests",
+    "Set up proper environment variables for all services"
+  ],
+  "testCoverage": {
+    "totalSpecs": 13,
+    "executedSpecs": 2,
+    "coverage": "15%"
+  }
+}

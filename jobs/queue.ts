@@ -3,10 +3,13 @@ import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 
 // Redis connection
-export const connection = {
-  host: env.REDIS_URL ? new URL(env.REDIS_URL).hostname : "localhost",
-  port: env.REDIS_URL ? parseInt(new URL(env.REDIS_URL).port) : 6379,
-  password: env.REDIS_URL ? new URL(env.REDIS_URL).password : undefined,
+export const connection = env.REDIS_URL ? {
+  host: new URL(env.REDIS_URL).hostname,
+  port: parseInt(new URL(env.REDIS_URL).port),
+  password: new URL(env.REDIS_URL).password,
+} : {
+  host: "localhost",
+  port: 6379,
 };
 
 // Queue definitions
@@ -145,6 +148,17 @@ export const addJob = async (queueName: string, jobData: any, options?: any) => 
 
 // Queue monitoring
 export const getQueueStats = async () => {
+  if (!env.REDIS_URL) {
+    return {
+      social: { waiting: 0, active: 0, completed: 0, failed: 0, delayed: 0 },
+      eventSync: { waiting: 0, active: 0, completed: 0, failed: 0, delayed: 0 },
+      webhook: { waiting: 0, active: 0, completed: 0, failed: 0, delayed: 0 },
+      email: { waiting: 0, active: 0, completed: 0, failed: 0, delayed: 0 },
+      sms: { waiting: 0, active: 0, completed: 0, failed: 0, delayed: 0 },
+      space: { waiting: 0, active: 0, completed: 0, failed: 0, delayed: 0 },
+    };
+  }
+
   const [socialStats, eventSyncStats, webhookStats, emailStats, smsStats, spaceStats] = await Promise.all([
     socialQueue.getJobCounts(),
     eventSyncQueue.getJobCounts(),
