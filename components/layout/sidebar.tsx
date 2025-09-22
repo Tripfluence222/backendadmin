@@ -69,7 +69,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <div
         data-testid="sidebar"
         className={cn(
-          "fixed left-0 top-0 z-50 h-full w-64 transform bg-background border-r transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+          "fixed left-0 top-0 z-30 h-full w-[var(--sidebar-w)] transform bg-background border-r transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
