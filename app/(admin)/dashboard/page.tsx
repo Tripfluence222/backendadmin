@@ -18,23 +18,24 @@ export default function DashboardPage() {
   const socialReach = 12500;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back! Here&apos;s what&apos;s happening with your business today.
-        </p>
-      </div>
+    <div className="max-w-7xl mx-auto w-full" data-testid="dashboard-container">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="space-y-2 mb-4 md:mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Welcome back! Here&apos;s what&apos;s happening with your business today.
+          </p>
+        </div>
 
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card data-testid="metric-card-revenue">
+        {/* Metrics Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" data-testid="metric-grid">
+        <Card data-testid="metric-card" className="h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-h-[180px] md:min-h-[200px] flex flex-col justify-between">
             <div data-testid="metric-value-revenue" className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               +20.1% from last month
@@ -42,12 +43,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card data-testid="metric-card-bookings">
+        <Card data-testid="metric-card" className="h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-h-[180px] md:min-h-[200px] flex flex-col justify-between">
             <div data-testid="metric-value-bookings" className="text-2xl font-bold">{totalBookings}</div>
             <p className="text-xs text-muted-foreground">
               +12.5% from last month
@@ -55,12 +56,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card data-testid="metric-card-customers">
+        <Card data-testid="metric-card" className="h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-h-[180px] md:min-h-[200px] flex flex-col justify-between">
             <div data-testid="metric-value-customers" className="text-2xl font-bold">{totalCustomers}</div>
             <p className="text-xs text-muted-foreground">
               +8.2% from last month
@@ -68,12 +69,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card data-testid="metric-card-social">
+        <Card data-testid="metric-card" className="h-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Social Reach</CardTitle>
             <Share2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-h-[180px] md:min-h-[200px] flex flex-col justify-between">
             <div data-testid="metric-value-social" className="text-2xl font-bold">{socialReach.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               +15.3% from last month
@@ -154,6 +155,7 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );

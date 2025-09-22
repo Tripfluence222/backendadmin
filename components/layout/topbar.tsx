@@ -34,7 +34,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
   const [notifications] = useState(5); // Mock notification count
 
   return (
-    <header data-testid="topbar" className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6">
+    <header data-testid="topbar" className="sticky top-0 z-40 h-[var(--topbar-h,64px)] border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center gap-4 px-4 lg:px-6">
       {/* Mobile menu button */}
       <Button
         variant="ghost"
