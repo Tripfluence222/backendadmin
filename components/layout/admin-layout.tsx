@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Sidebar } from "./sidebar";
 import { Topbar } from "./topbar";
+import { LayoutDebugToggle } from "../dev/LayoutDebugToggle";
+import { ClickProbe } from "../dev/ClickProbe";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -13,19 +15,30 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div 
-      className="min-h-screen bg-background"
-      style={{
-        '--topbar-h': '64px',
-        '--sidebar-w': '264px',
-      } as React.CSSProperties}
+      className="grid min-h-screen bg-background"
+      style={{ 
+        gridTemplateColumns: "var(--sidebar-w, 264px) 1fr",
+        gridTemplateRows: "var(--topbar-h, 64px) 1fr"
+      }}
     >
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="lg:pl-[var(--sidebar-w)]">
-        <Topbar onMenuClick={() => setSidebarOpen(true)} />
-        <main className="pt-4 md:pt-6 lg:pt-8 px-4 md:px-6 xl:px-10 max-w-7xl mx-auto w-full">
-          {children}
-        </main>
+      {/* Sidebar - spans full height */}
+      <div className="lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3">
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       </div>
+      
+      {/* Topbar - spans top row */}
+      <div className="lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:row-end-2">
+        <Topbar onMenuClick={() => setSidebarOpen(true)} />
+      </div>
+      
+      {/* Main content - spans bottom row */}
+      <main className="lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-3 min-h-[calc(100vh-var(--topbar-h,64px))] px-4 md:px-6 xl:px-10 pt-4 md:pt-6 relative z-10">
+        {children}
+      </main>
+      
+      {/* Debug components - only in development */}
+      <LayoutDebugToggle />
+      <ClickProbe />
     </div>
   );
 }

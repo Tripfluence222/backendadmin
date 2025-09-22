@@ -1,0 +1,14 @@
+{
+  "active_task": null,
+  "start_time": null,
+  "last_run": "2025-09-22T02:50:00Z",
+  "result": "SUCCESS",
+  "artifacts": [
+    "ai/artifacts/2025-09-22/q001-test-output.log"
+  ],
+  "notes": "Q-001 COMPLETED AND COMMITTED: CSV reader job deployed successfully. Commit 4eba6e6 pushed to main. Ready for Q-002.",
+  "session_id": "ready-for-q002",
+  "queue_position": 2,
+  "last_completed": "#Q-001 Add job src/jobs/runFromList.ts to read data/yoga_centers_bali.csv and enqueue sites",
+  "next_task": "#Q-002 Implement schedule-page discovery heuristics & provider detection"
+}

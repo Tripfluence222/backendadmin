@@ -42,9 +42,16 @@ export async function GET(request: NextRequest) {
     let queueStats = null;
     
     try {
-      queueStats = await getQueueStats();
+      // Only check queue stats if Redis is configured
+      if (env.REDIS_URL) {
+        queueStats = await getQueueStats();
+      } else {
+        queueStatus = "not_configured";
+        queueStats = { message: "Redis not configured" };
+      }
     } catch (error) {
       queueStatus = "unhealthy";
+      queueStats = { error: error.message };
     }
     
     // Check external services

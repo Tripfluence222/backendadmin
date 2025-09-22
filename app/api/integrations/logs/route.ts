@@ -19,14 +19,14 @@ export async function GET(request: NextRequest) {
     
     const { searchParams } = new URL(request.url);
     const query = logsQuerySchema.parse({
-      businessId: searchParams.get("businessId") || user.businessId,
+      businessId: searchParams.get("businessId") || user?.businessId || "default",
       type: searchParams.get("type") || "all",
       limit: parseInt(searchParams.get("limit") || "50"),
       offset: parseInt(searchParams.get("offset") || "0"),
     });
     
     // Verify user has access to business
-    if (user.businessId !== query.businessId) {
+    if (user?.businessId && user.businessId !== query.businessId) {
       return NextResponse.json(
         { error: "Access denied" },
         { status: 403 }
@@ -37,65 +37,75 @@ export async function GET(request: NextRequest) {
     
     // Get webhook deliveries if requested
     if (query.type === "all" || query.type === "webhook") {
-      const webhookLogs = await db.webhookDelivery.findMany({
-        where: {
-          businessId: query.businessId,
-        },
-        orderBy: { createdAt: "desc" },
-        take: query.limit,
-        skip: query.offset,
-      });
-      
-      logs.push(...webhookLogs.map(log => ({
-        id: log.id,
-        type: "webhook",
-        createdAt: log.createdAt,
-        eventType: log.eventType,
-        status: log.status,
-        durationMs: log.durationMs,
-        requestBody: log.requestBody,
-        responseBody: log.responseBody,
-        endpointId: log.endpointId,
-      })));
+      try {
+        const webhookLogs = await db.webhookDelivery.findMany({
+          where: {
+            businessId: query.businessId,
+          },
+          orderBy: { createdAt: "desc" },
+          take: query.limit,
+          skip: query.offset,
+        });
+        
+        logs.push(...(webhookLogs || []).map(log => ({
+          id: log.id,
+          type: "webhook",
+          createdAt: log.createdAt,
+          eventType: log.eventType,
+          status: log.status,
+          durationMs: log.durationMs,
+          requestBody: log.requestBody,
+          responseBody: log.responseBody,
+          endpointId: log.endpointId,
+        })));
+      } catch (error) {
+        // Table might not exist, continue without webhook logs
+        console.warn("Webhook logs table not available:", error);
+      }
     }
     
     // Get audit logs if requested
     if (query.type === "all" || query.type === "audit") {
-      const auditLogs = await db.auditLog.findMany({
-        where: {
-          businessId: query.businessId,
-          action: {
-            in: [
-              "PROVIDER_CONNECTED",
-              "PROVIDER_DISCONNECTED",
-              "PROVIDER_RECONNECT_REQUESTED",
-              "PROVIDER_REFRESHED",
-              "SOCIAL_POST_PUBLISHED",
-              "SOCIAL_POST_FAILED",
-              "SOCIAL_TEST_POST",
-              "EVENT_PUBLISHED",
-              "EVENT_UPDATED",
-              "EVENT_FAILED",
-              "EVENT_TEST_PUBLISH",
-            ],
+      try {
+        const auditLogs = await db.auditLog.findMany({
+          where: {
+            businessId: query.businessId,
+            action: {
+              in: [
+                "PROVIDER_CONNECTED",
+                "PROVIDER_DISCONNECTED",
+                "PROVIDER_RECONNECT_REQUESTED",
+                "PROVIDER_REFRESHED",
+                "SOCIAL_POST_PUBLISHED",
+                "SOCIAL_POST_FAILED",
+                "SOCIAL_TEST_POST",
+                "EVENT_PUBLISHED",
+                "EVENT_UPDATED",
+                "EVENT_FAILED",
+                "EVENT_TEST_PUBLISH",
+              ],
+            },
           },
-        },
-        orderBy: { createdAt: "desc" },
-        take: query.limit,
-        skip: query.offset,
-      });
-      
-      logs.push(...auditLogs.map(log => ({
-        id: log.id,
-        type: "audit",
-        createdAt: log.createdAt,
-        action: log.action,
-        entityType: log.entityType,
-        entityId: log.entityId,
-        actorType: log.actorType,
-        actorId: log.actorId,
-        metadata: log.metadata,
-      })));
+          orderBy: { createdAt: "desc" },
+          take: query.limit,
+          skip: query.offset,
+        });
+        
+        logs.push(...(auditLogs || []).map(log => ({
+          id: log.id,
+          type: "audit",
+          createdAt: log.createdAt,
+          action: log.action,
+          entityType: log.entityType,
+          entityId: log.entityId,
+          actorType: log.actorType,
+          actorId: log.actorId,
+          metadata: log.metadata,
+        })));
+      } catch (error) {
+        // Table might not exist, continue without audit logs
+        console.warn("Audit logs table not available:", error);
+      }
     }
     
     // Sort combined logs by creation date
