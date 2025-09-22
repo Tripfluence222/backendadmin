@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack --port 3000",
+    "dev": "next dev --port 3000",
     "dev:queue": "node jobs/worker.ts",
     "dev:all": "concurrently -k -n web,queue \"next dev --port 3000\" \"npm run dev:queue\"",
     "build": "next build --turbopack",
