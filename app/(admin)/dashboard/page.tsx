@@ -18,7 +18,7 @@ export default function DashboardPage() {
   const socialReach = 12500;
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
