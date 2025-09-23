@@ -32,7 +32,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       </div>
       
       {/* Main content - spans bottom row */}
-      <main className="lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-3 min-h-[calc(100vh-var(--topbar-h,64px))] px-4 md:px-6 xl:px-10 pt-4 md:pt-6 relative z-10">
+      <main className="lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-3 min-h-[calc(100vh-var(--topbar-h,64px))] container-admin pt-4 md:pt-6 relative z-10">
         {children}
       </main>
       

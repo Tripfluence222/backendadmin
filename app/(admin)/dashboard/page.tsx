@@ -18,24 +18,26 @@ export default function DashboardPage() {
   const socialReach = 12500;
 
   return (
-    <div className="max-w-7xl mx-auto w-full" data-testid="dashboard-container">
+    <div data-testid="dashboard-container">
       <div className="space-y-6">
         {/* Header */}
-        <div className="space-y-2 mb-4 md:mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome back! Here&apos;s what&apos;s happening with your business today.
-          </p>
+        <div className="flex flex-wrap items-center gap-3 md:gap-4 mb-6">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground">
+              Welcome back! Here&apos;s what&apos;s happening with your business today.
+            </p>
+          </div>
         </div>
 
         {/* Metrics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" data-testid="metric-grid">
-        <Card data-testid="metric-card" className="h-full">
+        <div className="grid-cards" data-testid="metric-grid">
+        <Card data-testid="metric-card" className="card-fill">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="min-h-[180px] md:min-h-[200px] flex flex-col justify-between">
+          <CardContent className="flex flex-col justify-between flex-1">
             <div data-testid="metric-value-revenue" className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               +20.1% from last month
@@ -43,12 +45,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card data-testid="metric-card" className="h-full">
+        <Card data-testid="metric-card" className="card-fill">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="min-h-[180px] md:min-h-[200px] flex flex-col justify-between">
+          <CardContent className="flex flex-col justify-between flex-1">
             <div data-testid="metric-value-bookings" className="text-2xl font-bold">{totalBookings}</div>
             <p className="text-xs text-muted-foreground">
               +12.5% from last month
@@ -56,12 +58,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card data-testid="metric-card" className="h-full">
+        <Card data-testid="metric-card" className="card-fill">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="min-h-[180px] md:min-h-[200px] flex flex-col justify-between">
+          <CardContent className="flex flex-col justify-between flex-1">
             <div data-testid="metric-value-customers" className="text-2xl font-bold">{totalCustomers}</div>
             <p className="text-xs text-muted-foreground">
               +8.2% from last month
@@ -69,12 +71,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card data-testid="metric-card" className="h-full">
+        <Card data-testid="metric-card" className="card-fill">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Social Reach</CardTitle>
             <Share2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="min-h-[180px] md:min-h-[200px] flex flex-col justify-between">
+          <CardContent className="flex flex-col justify-between flex-1">
             <div data-testid="metric-value-social" className="text-2xl font-bold">{socialReach.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               +15.3% from last month

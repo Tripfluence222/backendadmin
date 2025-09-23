@@ -130,6 +130,19 @@
   }
 }
 
+/* Layout utilities */
+.container-admin {
+  @apply px-4 md:px-6 xl:px-10 max-w-7xl mx-auto w-full;
+}
+
+.grid-cards {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6;
+}
+
+.card-fill {
+  @apply h-full min-h-[200px] flex flex-col;
+}
+
 /* Debug outline styles */
 .debug-outline * { 
   outline: 1px solid rgba(125,125,125,.15) 
