@@ -6,7 +6,7 @@
     "dev": "next dev --port 3000",
     "dev:queue": "node jobs/worker.ts",
     "dev:all": "concurrently -k -n web,queue \"next dev --port 3000\" \"npm run dev:queue\"",
-    "build": "next build",
+    "build": "npm run db:generate && next build",
     "start": "next start",
     "lint": "eslint",
     "test:e2e": "playwright test",
