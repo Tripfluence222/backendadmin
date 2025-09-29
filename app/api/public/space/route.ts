@@ -3,6 +3,9 @@ import { db } from '@/lib/db';
 import { PublicSpaceListSchema } from '@/lib/validation/space';
 import { getMinHourlyRate } from '@/lib/space/pricing';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 // GET /api/public/space - Public space listing for discovery
 export async function GET(request: NextRequest) {
   try {

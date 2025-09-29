@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   description: 'Find answers to frequently asked questions about booking spaces and hosting on Tripfluence.',
 };
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export default function HelpPage() {
   const helpCategories = [
     {

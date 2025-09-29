@@ -75,10 +75,24 @@ const envSchema = z.object({
 
 // Parse and validate environment variables
 const parseEnv = () => {
+  // Skip validation during build if SKIP_ENV_VALIDATION is set
+  if (process.env.SKIP_ENV_VALIDATION === 'true') {
+    return {
+      DATABASE_URL: process.env.DATABASE_URL || 'postgresql://dummy:dummy@localhost:5432/dummy',
+      JWT_SECRET: process.env.JWT_SECRET || 'dummy-jwt-secret-key-minimum-32-characters-long',
+      WEBHOOK_SECRET: process.env.WEBHOOK_SECRET || 'dummy-webhook-secret-key-minimum-32-characters-long',
+      NODE_ENV: process.env.NODE_ENV || 'production',
+      PORT: process.env.PORT || '3000',
+      FEATURE_REAL_PROVIDERS: false,
+      GRAPH_API_BASE: 'https://graph.facebook.com',
+      GOOGLE_BUSINESS_API_BASE: 'https://mybusiness.googleapis.com',
+    } as any;
+  }
+
   try {
     return envSchema.parse(process.env);
   } catch (error) {
-    if (error instanceof z.ZodError) {
+    if (error instanceof z.ZodError && error.errors) {
       const missingVars = error.errors
         .filter(err => err.code === "invalid_type" && err.received === "undefined")
         .map(err => err.path.join("."));

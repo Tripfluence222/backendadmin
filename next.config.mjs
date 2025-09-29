@@ -11,6 +11,15 @@ const nextConfig = {
     // your project has type errors.
     ignoreBuildErrors: true,
   },
+  // Disable static optimization for pages that use dynamic features
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
+  // Skip static optimization during build
+  trailingSlash: false,
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;

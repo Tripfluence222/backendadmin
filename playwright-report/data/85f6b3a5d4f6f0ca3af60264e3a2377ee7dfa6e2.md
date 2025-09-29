@@ -1,0 +1,239 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - generic [ref=e10]: T
+        - generic [ref=e11]: Tripfluence
+      - navigation [ref=e12]:
+        - link "Dashboard" [ref=e13] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e14] [cursor=pointer]
+          - generic [ref=e19] [cursor=pointer]: Dashboard
+        - link "Listings" [ref=e20] [cursor=pointer]:
+          - /url: /listings
+          - img [ref=e21] [cursor=pointer]
+          - generic [ref=e22] [cursor=pointer]: Listings
+        - link "Spaces" [ref=e23] [cursor=pointer]:
+          - /url: /spaces
+          - img [ref=e24] [cursor=pointer]
+          - generic [ref=e28] [cursor=pointer]: Spaces
+        - link "Space Requests" [ref=e29] [cursor=pointer]:
+          - /url: /space-requests
+          - img [ref=e30] [cursor=pointer]
+          - generic [ref=e32] [cursor=pointer]: Space Requests
+        - link "Space Pricing" [ref=e33] [cursor=pointer]:
+          - /url: /space-pricing
+          - img [ref=e34] [cursor=pointer]
+          - generic [ref=e36] [cursor=pointer]: Space Pricing
+        - link "Availability" [ref=e37] [cursor=pointer]:
+          - /url: /availability
+          - img [ref=e38] [cursor=pointer]
+          - generic [ref=e40] [cursor=pointer]: Availability
+        - link "Orders 3" [ref=e41] [cursor=pointer]:
+          - /url: /orders
+          - img [ref=e42] [cursor=pointer]
+          - generic [ref=e46] [cursor=pointer]: Orders
+          - generic [ref=e47] [cursor=pointer]: "3"
+        - link "Customers" [ref=e48] [cursor=pointer]:
+          - /url: /customers
+          - img [ref=e49] [cursor=pointer]
+          - generic [ref=e54] [cursor=pointer]: Customers
+        - link "Reviews" [ref=e55] [cursor=pointer]:
+          - /url: /reviews
+          - img [ref=e56] [cursor=pointer]
+          - generic [ref=e58] [cursor=pointer]: Reviews
+        - link "Widgets" [ref=e59] [cursor=pointer]:
+          - /url: /widgets
+          - img [ref=e60] [cursor=pointer]
+          - generic [ref=e62] [cursor=pointer]: Widgets
+        - link "Social" [ref=e63] [cursor=pointer]:
+          - /url: /social
+          - img [ref=e64] [cursor=pointer]
+          - generic [ref=e70] [cursor=pointer]: Social
+        - link "Event Sync" [ref=e71] [cursor=pointer]:
+          - /url: /event-sync
+          - img [ref=e72] [cursor=pointer]
+          - generic [ref=e74] [cursor=pointer]: Event Sync
+        - link "Integrations" [ref=e75] [cursor=pointer]:
+          - /url: /integrations
+          - img [ref=e76] [cursor=pointer]
+          - generic [ref=e78] [cursor=pointer]: Integrations
+        - link "Marketing" [ref=e79] [cursor=pointer]:
+          - /url: /marketing
+          - img [ref=e80] [cursor=pointer]
+          - generic [ref=e83] [cursor=pointer]: Marketing
+        - link "Reports" [ref=e84] [cursor=pointer]:
+          - /url: /reports
+          - img [ref=e85] [cursor=pointer]
+          - generic [ref=e87] [cursor=pointer]: Reports
+        - link "Settings" [ref=e88] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e89] [cursor=pointer]
+          - generic [ref=e92] [cursor=pointer]: Settings
+      - generic [ref=e94]:
+        - generic [ref=e96]: AD
+        - generic [ref=e97]:
+          - paragraph [ref=e98]: Admin User
+          - paragraph [ref=e99]: admin@tripfluence.com
+    - banner [ref=e101]:
+      - generic [ref=e103]:
+        - img [ref=e104]
+        - searchbox "Search..." [ref=e107]
+      - generic [ref=e108]:
+        - button "Toggle theme" [ref=e109]:
+          - img [ref=e110]
+          - generic [ref=e116]: Toggle theme
+        - button "5 Notifications" [ref=e117]:
+          - img [ref=e118]
+          - generic [ref=e121]: "5"
+          - generic [ref=e122]: Notifications
+        - button "AD" [ref=e123]:
+          - generic [ref=e125]: AD
+    - main [ref=e126]:
+      - generic [ref=e128]:
+        - generic [ref=e129]:
+          - heading "Dashboard" [level=1] [ref=e130]
+          - paragraph [ref=e131]: Welcome back! Here's what's happening with your business today.
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - generic [ref=e134]:
+              - heading "Total Revenue" [level=3] [ref=e135]
+              - img [ref=e136]
+            - generic [ref=e138]:
+              - generic [ref=e139]: $125,000
+              - paragraph [ref=e140]: +20.1% from last month
+          - generic [ref=e141]:
+            - generic [ref=e142]:
+              - heading "Total Bookings" [level=3] [ref=e143]
+              - img [ref=e144]
+            - generic [ref=e148]:
+              - generic [ref=e149]: "45"
+              - paragraph [ref=e150]: +12.5% from last month
+          - generic [ref=e151]:
+            - generic [ref=e152]:
+              - heading "Total Customers" [level=3] [ref=e153]
+              - img [ref=e154]
+            - generic [ref=e159]:
+              - generic [ref=e160]: "23"
+              - paragraph [ref=e161]: +8.2% from last month
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - heading "Social Reach" [level=3] [ref=e164]
+              - img [ref=e165]
+            - generic [ref=e171]:
+              - generic [ref=e172]: 12,500
+              - paragraph [ref=e173]: +15.3% from last month
+        - generic [ref=e174]:
+          - generic [ref=e175]:
+            - generic [ref=e176]:
+              - heading "Recent Orders" [level=3] [ref=e177]
+              - paragraph [ref=e178]: Latest bookings and orders from customers
+            - generic [ref=e179]:
+              - generic [ref=e180]:
+                - button "View details for order from Sarah Johnson" [ref=e181]:
+                  - generic [ref=e182]:
+                    - paragraph [ref=e183]: Sarah Johnson
+                    - paragraph [ref=e184]: Sunset Yoga Retreat
+                  - generic [ref=e185]:
+                    - paragraph [ref=e186]: $598
+                    - generic [ref=e187]: paid
+                - button "View details for order from Michael Chen" [ref=e188]:
+                  - generic [ref=e189]:
+                    - paragraph [ref=e190]: Michael Chen
+                    - paragraph [ref=e191]: Farm-to-Table Cooking Class
+                  - generic [ref=e192]:
+                    - paragraph [ref=e193]: $150
+                    - generic [ref=e194]: paid
+                - button "View details for order from Emily Rodriguez" [ref=e195]:
+                  - generic [ref=e196]:
+                    - paragraph [ref=e197]: Emily Rodriguez
+                    - paragraph [ref=e198]: Luxury Beach Villa
+                  - generic [ref=e199]:
+                    - paragraph [ref=e200]: $3200
+                    - generic [ref=e201]: pending
+                - button "View details for order from David Kim" [ref=e202]:
+                  - generic [ref=e203]:
+                    - paragraph [ref=e204]: David Kim
+                    - paragraph [ref=e205]: Fine Dining Restaurant
+                  - generic [ref=e206]:
+                    - paragraph [ref=e207]: $240
+                    - generic [ref=e208]: paid
+                - button "View details for order from Lisa Thompson" [ref=e209]:
+                  - generic [ref=e210]:
+                    - paragraph [ref=e211]: Lisa Thompson
+                    - paragraph [ref=e212]: Sunset Yoga Retreat
+                  - generic [ref=e213]:
+                    - paragraph [ref=e214]: $299
+                    - generic [ref=e215]: failed
+              - link "View All Orders" [ref=e216] [cursor=pointer]:
+                - /url: /orders
+          - generic [ref=e217]:
+            - generic [ref=e218]:
+              - heading "Top Listings" [level=3] [ref=e219]
+              - paragraph [ref=e220]: Your most popular listings and events
+            - generic [ref=e221]:
+              - generic [ref=e223]:
+                - img [ref=e224]
+                - paragraph [ref=e226]: No listings available
+              - link "View All Listings" [ref=e227] [cursor=pointer]:
+                - /url: /listings
+        - generic [ref=e228]:
+          - generic [ref=e229]:
+            - heading "Quick Actions" [level=3] [ref=e230]
+            - paragraph [ref=e231]: Common tasks and shortcuts
+          - generic [ref=e233]:
+            - link "Create a new event listing" [ref=e234] [cursor=pointer]:
+              - /url: /listings/new?type=event
+              - img [ref=e235] [cursor=pointer]
+              - generic [ref=e237] [cursor=pointer]: Add Event
+            - link "Manage customer relationships" [active] [ref=e238] [cursor=pointer]:
+              - /url: /customers
+              - img [ref=e239] [cursor=pointer]
+              - generic [ref=e244] [cursor=pointer]: View Customers
+            - link "Analytics and insights" [ref=e245] [cursor=pointer]:
+              - /url: /reports
+              - img [ref=e246] [cursor=pointer]
+              - generic [ref=e249] [cursor=pointer]: View Reports
+            - link "Manage social presence" [ref=e250] [cursor=pointer]:
+              - /url: /social
+              - img [ref=e251] [cursor=pointer]
+              - generic [ref=e257] [cursor=pointer]: Social Media
+        - generic [ref=e258]:
+          - generic [ref=e259]:
+            - heading "Recent Activity" [level=3] [ref=e261]
+            - generic [ref=e263]:
+              - generic [ref=e264]:
+                - generic [ref=e267]: New booking from Sarah Johnson
+                - generic [ref=e268]: 2 hours ago
+              - generic [ref=e269]:
+                - generic [ref=e272]: Yoga class updated
+                - generic [ref=e273]: 4 hours ago
+              - generic [ref=e274]:
+                - generic [ref=e277]: New customer review received
+                - generic [ref=e278]: 6 hours ago
+              - generic [ref=e279]:
+                - generic [ref=e282]: Social post published
+                - generic [ref=e283]: 8 hours ago
+          - generic [ref=e284]:
+            - heading "Quick Stats" [level=3] [ref=e286]
+            - generic [ref=e287]:
+              - generic [ref=e288]:
+                - generic [ref=e289]: Today's Bookings
+                - generic [ref=e290]: "12"
+              - generic [ref=e291]:
+                - generic [ref=e292]: Available Slots
+                - generic [ref=e293]: "8"
+              - generic [ref=e294]:
+                - generic [ref=e295]: Pending Reviews
+                - generic [ref=e296]: "3"
+              - generic [ref=e297]:
+                - generic [ref=e298]: Active Listings
+                - generic [ref=e299]: "24"
+    - button "Enable layout debug" [ref=e300]:
+      - img [ref=e301]
+  - region "Notifications alt+T"
+```

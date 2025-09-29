@@ -4,6 +4,9 @@ import { db } from "@/lib/db";
 import { ok, badReq, serverErr } from "@/lib/http";
 import { requireAuth, requirePermission } from "@/lib/auth";
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 const logsQuerySchema = z.object({
   businessId: z.string().cuid(),
   type: z.enum(["all", "webhook", "audit"]).default("all"),

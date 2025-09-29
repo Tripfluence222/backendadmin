@@ -25,6 +25,8 @@ import { updateBrandingSchema, updatePaymentSettingsSchema, createUserSchema, up
 import { UserColumns } from "./user-columns";
 import { WebhookColumns } from "./webhook-columns";
 import { ApiKeyColumns } from "./api-key-columns";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("branding");
@@ -289,62 +291,11 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <DrawerForm
-                isOpen={true}
-                onClose={() => {}}
-                title="Branding Settings"
-                description="Update your platform's visual identity"
-                schema={updateBrandingSchema}
+              <BrandingForm 
                 defaultValues={brandingSettings}
                 onSubmit={handleUpdateBranding}
                 isLoading={updateBrandingMutation.isPending}
-                showCloseButton={false}
-              >
-                {(form) => (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium">Logo URL</label>
-                      <Input {...form.register("logo")} placeholder="https://example.com/logo.png" />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium">Primary Color</label>
-                        <Input {...form.register("primaryColor")} type="color" />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium">Secondary Color</label>
-                        <Input {...form.register("secondaryColor")} type="color" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium">Font Family</label>
-                      <Select onValueChange={(value) => form.setValue("fontFamily", value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select font" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Inter">Inter</SelectItem>
-                          <SelectItem value="Roboto">Roboto</SelectItem>
-                          <SelectItem value="Open Sans">Open Sans</SelectItem>
-                          <SelectItem value="Arial">Arial</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium">Custom CSS</label>
-                      <textarea
-                        {...form.register("customCSS")}
-                        className="w-full p-2 border rounded-md"
-                        rows={6}
-                        placeholder="/* Custom CSS styles */"
-                      />
-                    </div>
-                  </div>
-                )}
-              </DrawerForm>
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -361,75 +312,11 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <DrawerForm
-                isOpen={true}
-                onClose={() => {}}
-                title="Payment Settings"
-                description="Configure your payment processing"
-                schema={updatePaymentSettingsSchema}
+              <PaymentForm 
                 defaultValues={paymentSettings}
                 onSubmit={handleUpdatePayment}
                 isLoading={updatePaymentMutation.isPending}
-                showCloseButton={false}
-              >
-                {(form) => (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium">Default Currency</label>
-                      <Select onValueChange={(value) => form.setValue("defaultCurrency", value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select currency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="USD">USD</SelectItem>
-                          <SelectItem value="EUR">EUR</SelectItem>
-                          <SelectItem value="GBP">GBP</SelectItem>
-                          <SelectItem value="INR">INR</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium">Tax Rate (%)</label>
-                      <Input 
-                        {...form.register("taxRate", { valueAsNumber: true })} 
-                        type="number" 
-                        min="0" 
-                        max="100" 
-                        step="0.1"
-                      />
-                    </div>
-
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium">Stripe Settings</h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-sm font-medium">Public Key</label>
-                          <Input {...form.register("stripePublicKey")} placeholder="pk_live_..." />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Secret Key</label>
-                          <Input {...form.register("stripeSecretKey")} type="password" placeholder="sk_live_..." />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium">PayPal Settings</h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-sm font-medium">Client ID</label>
-                          <Input {...form.register("paypalClientId")} placeholder="PayPal Client ID" />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Client Secret</label>
-                          <Input {...form.register("paypalClientSecret")} type="password" placeholder="PayPal Client Secret" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </DrawerForm>
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -657,5 +544,158 @@ export default function SettingsPage() {
         </DrawerForm>
       )}
     </div>
+  );
+}
+
+// Branding Form Component
+function BrandingForm({ defaultValues, onSubmit, isLoading }: {
+  defaultValues?: any;
+  onSubmit: (data: any) => void;
+  isLoading: boolean;
+}) {
+  const form = useForm({
+    resolver: zodResolver(updateBrandingSchema),
+    defaultValues: defaultValues || {},
+  });
+
+  const handleSubmit = (data: any) => {
+    onSubmit(data);
+  };
+
+  return (
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <div>
+        <label className="text-sm font-medium">Logo URL</label>
+        <Input {...form.register("logo")} placeholder="https://example.com/logo.png" />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="text-sm font-medium">Primary Color</label>
+          <Input {...form.register("primaryColor")} type="color" />
+        </div>
+        <div>
+          <label className="text-sm font-medium">Secondary Color</label>
+          <Input {...form.register("secondaryColor")} type="color" />
+        </div>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium">Font Family</label>
+        <Select onValueChange={(value) => form.setValue("fontFamily", value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select font" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Inter">Inter</SelectItem>
+            <SelectItem value="Roboto">Roboto</SelectItem>
+            <SelectItem value="Open Sans">Open Sans</SelectItem>
+            <SelectItem value="Arial">Arial</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium">Custom CSS</label>
+        <textarea
+          {...form.register("customCSS")}
+          className="w-full p-2 border rounded-md"
+          rows={6}
+          placeholder="/* Custom CSS styles */"
+        />
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="outline" onClick={() => form.reset()}>
+          Reset
+        </Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Saving..." : "Save Changes"}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+// Payment Form Component
+function PaymentForm({ defaultValues, onSubmit, isLoading }: {
+  defaultValues?: any;
+  onSubmit: (data: any) => void;
+  isLoading: boolean;
+}) {
+  const form = useForm({
+    resolver: zodResolver(updatePaymentSettingsSchema),
+    defaultValues: defaultValues || {},
+  });
+
+  const handleSubmit = (data: any) => {
+    onSubmit(data);
+  };
+
+  return (
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <div>
+        <label className="text-sm font-medium">Default Currency</label>
+        <Select onValueChange={(value) => form.setValue("defaultCurrency", value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select currency" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="USD">USD</SelectItem>
+            <SelectItem value="EUR">EUR</SelectItem>
+            <SelectItem value="GBP">GBP</SelectItem>
+            <SelectItem value="INR">INR</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium">Tax Rate (%)</label>
+        <Input 
+          {...form.register("taxRate", { valueAsNumber: true })} 
+          type="number" 
+          min="0" 
+          max="100" 
+          step="0.1"
+        />
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium">Stripe Settings</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium">Public Key</label>
+            <Input {...form.register("stripePublicKey")} placeholder="pk_live_..." />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Secret Key</label>
+            <Input {...form.register("stripeSecretKey")} type="password" placeholder="sk_live_..." />
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium">PayPal Settings</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium">Client ID</label>
+            <Input {...form.register("paypalClientId")} placeholder="PayPal Client ID" />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Client Secret</label>
+            <Input {...form.register("paypalClientSecret")} type="password" placeholder="PayPal Client Secret" />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="outline" onClick={() => form.reset()}>
+          Reset
+        </Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Saving..." : "Save Changes"}
+        </Button>
+      </div>
+    </form>
   );
 }

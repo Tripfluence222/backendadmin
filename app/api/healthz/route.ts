@@ -3,6 +3,9 @@ import { db } from "@/lib/db";
 import { env } from "@/lib/env";
 import { getQueueStats } from "@/jobs/queue";
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   

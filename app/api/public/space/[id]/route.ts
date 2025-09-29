@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getMinHourlyRate } from '@/lib/space/pricing';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 // GET /api/public/space/[id] - Get public space details
 export async function GET(
   request: NextRequest,

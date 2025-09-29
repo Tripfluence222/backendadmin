@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   description: 'Learn about Tripfluence and our mission to connect people with amazing spaces.',
 };
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-16">

@@ -6,6 +6,9 @@ import { requireAuth, requirePermission } from "@/lib/auth";
 import { computeAccountStatus } from "@/lib/integrations/status";
 import { SocialProvider } from "@prisma/client";
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 const accountsQuerySchema = z.object({
   businessId: z.string().cuid(),
 });

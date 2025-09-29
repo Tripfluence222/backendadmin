@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   description: 'Get in touch with the Tripfluence team. We\'re here to help with any questions about spaces, bookings, or hosting.',
 };
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export default function ContactPage() {
   return (
     <div className="container mx-auto px-4 py-16">

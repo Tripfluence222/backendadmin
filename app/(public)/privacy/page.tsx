@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   description: 'Learn how Tripfluence collects, uses, and protects your personal information.',
 };
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export default function PrivacyPage() {
   const lastUpdated = "December 15, 2024";
 

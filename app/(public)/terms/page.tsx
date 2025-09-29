@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   description: 'Read the terms and conditions for using the Tripfluence platform.',
 };
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export default function TermsPage() {
   const lastUpdated = "December 15, 2024";
 

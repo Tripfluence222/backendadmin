@@ -430,7 +430,7 @@ function NewListingPageContent() {
 
         {/* Submit Button */}
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline">
+          <Button type="button" variant="outline" onClick={() => window.history.back()}>
             Cancel
           </Button>
           <Button type="submit" disabled={isLoading}>
