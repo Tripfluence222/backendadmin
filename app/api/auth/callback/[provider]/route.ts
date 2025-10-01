@@ -12,6 +12,9 @@ const callbackSchema = z.object({
   provider: z.nativeEnum(SocialProvider),
 });
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ provider: string }> }
@@ -175,7 +178,7 @@ async function exchangeFacebookTokens(code: string, redirectUri: string) {
     accessToken: data.access_token,
     refreshToken: null, // Facebook uses long-lived tokens
     expiresAt,
-    scopes: data.scopes || [],
+    scopes: Array.isArray(data.scopes) ? data.scopes : [],
   };
 }
 

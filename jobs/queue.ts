@@ -7,18 +7,15 @@ export const connection = env.REDIS_URL ? {
   host: new URL(env.REDIS_URL).hostname,
   port: parseInt(new URL(env.REDIS_URL).port),
   password: new URL(env.REDIS_URL).password,
-} : {
-  host: "localhost",
-  port: 6379,
-};
+} : null;
 
-// Queue definitions
-export const socialQueue = new Queue("social", { connection });
-export const eventSyncQueue = new Queue("event-sync", { connection });
-export const webhookQueue = new Queue("webhook", { connection });
-export const emailQueue = new Queue("email", { connection });
-export const smsQueue = new Queue("sms", { connection });
-export const spaceQueue = new Queue("space", { connection });
+// Queue definitions - only create if Redis is configured
+export const socialQueue = connection ? new Queue("social", { connection }) : null;
+export const eventSyncQueue = connection ? new Queue("event-sync", { connection }) : null;
+export const webhookQueue = connection ? new Queue("webhook", { connection }) : null;
+export const emailQueue = connection ? new Queue("email", { connection }) : null;
+export const smsQueue = connection ? new Queue("sms", { connection }) : null;
+export const spaceQueue = connection ? new Queue("space", { connection }) : null;
 
 // Job types
 export interface SocialPublishJob {
@@ -64,6 +61,10 @@ export interface SpaceHoldExpireJob {
 
 // Queue management functions
 export const addSocialPublishJob = async (jobData: SocialPublishJob, options?: any) => {
+  if (!socialQueue) {
+    logger.warn("Redis not configured, skipping social publish job");
+    return null;
+  }
   return socialQueue.add("publish", jobData, {
     delay: jobData.scheduledAt ? new Date(jobData.scheduledAt).getTime() - Date.now() : 0,
     attempts: 3,
@@ -76,6 +77,10 @@ export const addSocialPublishJob = async (jobData: SocialPublishJob, options?: a
 };
 
 export const addEventSyncJob = async (jobData: EventSyncJob, options?: any) => {
+  if (!eventSyncQueue) {
+    logger.warn("Redis not configured, skipping event sync job");
+    return null;
+  }
   return eventSyncQueue.add("sync", jobData, {
     attempts: 3,
     backoff: {
@@ -87,6 +92,10 @@ export const addEventSyncJob = async (jobData: EventSyncJob, options?: any) => {
 };
 
 export const addWebhookJob = async (jobData: WebhookJob, options?: any) => {
+  if (!webhookQueue) {
+    logger.warn("Redis not configured, skipping webhook job");
+    return null;
+  }
   return webhookQueue.add("dispatch", jobData, {
     attempts: 5,
     backoff: {
@@ -98,6 +107,10 @@ export const addWebhookJob = async (jobData: WebhookJob, options?: any) => {
 };
 
 export const addEmailJob = async (jobData: EmailJob, options?: any) => {
+  if (!emailQueue) {
+    logger.warn("Redis not configured, skipping email job");
+    return null;
+  }
   return emailQueue.add("send", jobData, {
     attempts: 3,
     backoff: {
@@ -109,6 +122,10 @@ export const addEmailJob = async (jobData: EmailJob, options?: any) => {
 };
 
 export const addSMSJob = async (jobData: SMSJob, options?: any) => {
+  if (!smsQueue) {
+    logger.warn("Redis not configured, skipping SMS job");
+    return null;
+  }
   return smsQueue.add("send", jobData, {
     attempts: 3,
     backoff: {
@@ -120,6 +137,10 @@ export const addSMSJob = async (jobData: SMSJob, options?: any) => {
 };
 
 export const addSpaceHoldExpireJob = async (jobData: SpaceHoldExpireJob, options?: any) => {
+  if (!spaceQueue) {
+    logger.warn("Redis not configured, skipping space hold expire job");
+    return null;
+  }
   return spaceQueue.add("hold-expire", jobData, {
     attempts: 1, // Only try once for hold expiry
     ...options,
@@ -180,36 +201,37 @@ export const getQueueStats = async () => {
 
 // Cleanup old jobs
 export const cleanupOldJobs = async () => {
+  if (!connection) {
+    logger.info("Redis not configured, skipping cleanup");
+    return;
+  }
+  
   const cutoffTime = Date.now() - 7 * 24 * 60 * 60 * 1000; // 7 days ago
   
-  await Promise.all([
-    socialQueue.clean(cutoffTime, 100, "completed"),
-    socialQueue.clean(cutoffTime, 100, "failed"),
-    eventSyncQueue.clean(cutoffTime, 100, "completed"),
-    eventSyncQueue.clean(cutoffTime, 100, "failed"),
-    webhookQueue.clean(cutoffTime, 100, "completed"),
-    webhookQueue.clean(cutoffTime, 100, "failed"),
-    emailQueue.clean(cutoffTime, 100, "completed"),
-    emailQueue.clean(cutoffTime, 100, "failed"),
-    smsQueue.clean(cutoffTime, 100, "completed"),
-    smsQueue.clean(cutoffTime, 100, "failed"),
-    spaceQueue.clean(cutoffTime, 100, "completed"),
-    spaceQueue.clean(cutoffTime, 100, "failed"),
-  ]);
+  const cleanupPromises = [];
+  if (socialQueue) cleanupPromises.push(socialQueue.clean(cutoffTime, 100, "completed"), socialQueue.clean(cutoffTime, 100, "failed"));
+  if (eventSyncQueue) cleanupPromises.push(eventSyncQueue.clean(cutoffTime, 100, "completed"), eventSyncQueue.clean(cutoffTime, 100, "failed"));
+  if (webhookQueue) cleanupPromises.push(webhookQueue.clean(cutoffTime, 100, "completed"), webhookQueue.clean(cutoffTime, 100, "failed"));
+  if (emailQueue) cleanupPromises.push(emailQueue.clean(cutoffTime, 100, "completed"), emailQueue.clean(cutoffTime, 100, "failed"));
+  if (smsQueue) cleanupPromises.push(smsQueue.clean(cutoffTime, 100, "completed"), smsQueue.clean(cutoffTime, 100, "failed"));
+  if (spaceQueue) cleanupPromises.push(spaceQueue.clean(cutoffTime, 100, "completed"), spaceQueue.clean(cutoffTime, 100, "failed"));
+  
+  await Promise.all(cleanupPromises);
   
   logger.info("Cleaned up old jobs");
 };
 
 // Graceful shutdown
 export const closeQueues = async () => {
-  await Promise.all([
-    socialQueue.close(),
-    eventSyncQueue.close(),
-    webhookQueue.close(),
-    emailQueue.close(),
-    smsQueue.close(),
-    spaceQueue.close(),
-  ]);
+  const closePromises = [];
+  if (socialQueue) closePromises.push(socialQueue.close());
+  if (eventSyncQueue) closePromises.push(eventSyncQueue.close());
+  if (webhookQueue) closePromises.push(webhookQueue.close());
+  if (emailQueue) closePromises.push(emailQueue.close());
+  if (smsQueue) closePromises.push(smsQueue.close());
+  if (spaceQueue) closePromises.push(spaceQueue.close());
+  
+  await Promise.all(closePromises);
   
   logger.info("All queues closed");
 };

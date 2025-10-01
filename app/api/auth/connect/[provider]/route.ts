@@ -6,6 +6,9 @@ import { rbacServer } from '@/lib/rbac-server';
 import { SocialProvider } from '@prisma/client';
 import { randomBytes } from 'crypto';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 const connectSchema = z.object({
   businessId: z.string().cuid(),
   provider: z.nativeEnum(SocialProvider),
