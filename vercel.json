@@ -1,0 +1,7 @@
+{
+  "buildCommand": "prisma generate && SKIP_ENV_VALIDATION=true next build",
+  "devCommand": "next dev --port 3000",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next"
+}
