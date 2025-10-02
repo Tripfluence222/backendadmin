@@ -1,0 +1,17 @@
+# API routes
+/api/* /.netlify/functions/:splat 200
+
+# Admin routes
+/admin/* /admin/index.html 200
+
+# Public routes
+/venues/* /venues/index.html 200
+/search /search/index.html 200
+/about /about/index.html 200
+/contact /contact/index.html 200
+/help /help/index.html 200
+/privacy /privacy/index.html 200
+/terms /terms/index.html 200
+
+# Fallback
+/* /index.html 200
